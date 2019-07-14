@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Chameleon</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+
+
+
+  <div class="home page">
+    <h1> The Chameleon </h1>
+    <div class='gameButtons'>
+        <button class='newGame' placeholder="New Game">New Game</button>
+        <button class='joinGame' placeholder="Join Game">Join Game</button>
+    </div>
+  </div>
+  
+  <div class="create page">
+    <input class="usernameInput" type="text" maxlength="14" placeholder="Enter your name"/>
+    <div class='gameButtons'>
+        <button class='createGame' placeholder="Create Game">Create Game</button>
+        <button class='backtoHome' placeholder="Back">Back</button>
+    </div>
+  </div>
+
+  <div class="join page">
+      <input class="usernameInput" type="text" maxlength="14" placeholder="Enter your name"/>
+      <input class="accesscodeInput" type="text" maxlength="4" placeholder="Enter an access code"/>
+  </div>
+
+  <div class="lobby page">
+    <h2>Waiting for players...</h2>
+    <h3>Access code: </h3>
+    <h3 id=accesscodeDisplay></h3>
+    <ol>
+      <li id = player1Display></li>
+      <li id = player2Display></li>
+      <li id = player3Display></li>
+      <li id = player4Display></li>
+      <li id = player5Display></li>
+      <li id = player6Display></li>
+      <li id = player7Display></li>
+      <li id = player8Display></li>
+    </ol>
+    
+    <div class='gameButtons'>
+      <button class='startGame' placeholder="Start Game">Create Game</button>
+      <button class='leaveGame' placeholder="Leave Game">Leave Game</button>
+    </div>
+  </div>
+
+  <div class="game page">
+      <input class="usernameInput" type="text" maxlength="14" placeholder="Enter your name"/>
+      <input class="accesscodeInput" type="text" maxlength="4" placeholder="Enter an access code"/>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>-->
+  <script src="/main.js"></script>
+
+
+</body>
+
+
+</html>

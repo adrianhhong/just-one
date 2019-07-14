@@ -4,6 +4,7 @@
   "description": "The Chameleon Board Game interpreted as an online game",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/adrianhhong/thechameleon/issues"
   },
-  "homepage": "https://github.com/adrianhhong/thechameleon#readme"
+  "homepage": "https://github.com/adrianhhong/thechameleon#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0"
+  }
 }
