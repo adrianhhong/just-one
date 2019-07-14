@@ -41,10 +41,22 @@ function buildGame(username) {
  
   console.log("Game Created by "+ username + " w/ " + gameObject.id);
   // console.log(gameCollection)
+
+  // var nsp = io.of('/'+gameObject.id);
+  // nsp.emit('gameCreated', {
+  //   username: username,
+  //   gameId: gameObject.id
+  // });
+
   io.emit('gameCreated', {
     username: username,
     gameId: gameObject.id
   });
+
+  // io.emit('gameCreated', {
+  //   username: username,
+  //   gameId: gameObject.id
+  // });
  
  
 }

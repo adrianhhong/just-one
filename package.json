@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/adrianhhong/thechameleon#readme",
   "dependencies": {
+    "ejs": "^2.6.2",
     "express": "^4.17.1",
+    "npm": "^6.10.1",
     "socket.io": "^2.2.0"
   }
 }
