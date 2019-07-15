@@ -17,13 +17,14 @@ var $newGame = $('.newGame');
 var $joinGame = $('.joinGame'); 
 var $createGame = $('.createGame'); 
 var $backtoHome = $('.backtoHome'); 
+var $joinLobby = $('.joinLobby'); 
 var $startGame = $('.startGame'); 
 var $leaveGame = $('.leaveGame'); 
 
 // Input Text Fields
 var $usernameInput = $('.usernameInput');
 var $accesscodeInput =  $('.accesscodeInput');
-
+var $usernameJoinInput = $('.usernameJoinInput');
 
 
 
@@ -56,6 +57,15 @@ $newGame.click(function () {
     $gamePage.hide();
 });
 
+// Join Game Button
+$joinGame.click(function () {
+    $homePage.hide();
+    $createPage.hide();
+    $joinPage.show();
+    $lobbyPage.hide();
+    $gamePage.hide();
+});
+
 // Back Button
 $backtoHome.click(function () {
     $homePage.show();
@@ -83,10 +93,17 @@ $leaveGame.click(function () {
     $gamePage.hide();
 });
 
+// Join Lobby Button
+$joinLobby.click(function () {
+    var usernameJoin = $usernameJoinInput.val().trim();
+    var accesscodeJoin = $accesscodeInput.val().trim();
+    socket.emit('joinGame', usernameJoin, accesscodeJoin);
+});
+
 
 socket.on('gameCreated', function (data) {
     console.log("Game Created! ID is: " + data.gameId)
-
+    
     // Display the access code
     var accesscodeDisplay = document.getElementById('accesscodeDisplay');
     accesscodeDisplay.innerHTML = data.gameId;
@@ -94,11 +111,46 @@ socket.on('gameCreated', function (data) {
     var player1Display = document.getElementById('player1Display');
     player1Display.innerHTML = data.username;
 
+
     $homePage.hide();
     $createPage.hide();
     $joinPage.hide();
     $lobbyPage.show();
     $gamePage.hide();
+
 });
 
+socket.on('gameJoined', function (data) {
+    console.log("Game Joined! ID is: " + data.gameId)
+    
+    // Display the access code
+    var accesscodeDisplay = document.getElementById('accesscodeDisplay');
+    accesscodeDisplay.innerHTML = data.gameId;
 
+    var i=0;
+
+    while (data.players[i] != null){
+      var playerDisplay = document.getElementById('player'+i+'Display');
+      playerDisplay.innerHTML = data.players;
+    }
+
+    $homePage.hide();
+    $createPage.hide();
+    $joinPage.hide();
+    $lobbyPage.show();
+    $gamePage.hide();
+
+});
+
+socket.on('cantFindGametoJoin', function(){
+    var noGameFoundDisplay = document.getElementById('noGameFound');
+    noGameFoundDisplay.innerHTML = "Sorry, no game found with that access code.";
+    //Need to remove after like 5 sec. and fade out
+})
+
+
+socket.on('noPlayerSlotsAvailable', function(){
+    var noRoomDisplay = document.getElementById('noRoom');
+    noRoomDisplay.innerHTML = "Sorry, that game room is full.";
+    //Need to remove after like 5 sec. and fade out
+})

@@ -11,6 +11,27 @@ server.listen(port, function () {
   fs.writeFile(__dirname + '/start.log', 'started'); 
 });
 
+// Setting up ejs views
+app.set('views', './views');
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+app.use(express.urlencoded({ extened: true }))
+
+// Routing
+const rooms ={}
+
+app.get('/', (req, res) => {
+  res.render('index', { rooms: rooms })
+})
+
+app.get('/:room', (req, res) => {
+  res.render('room', {roomName: req.params.room})
+})
+
+
+// app.post('/')
+
+
 // Routing
 app.use(express.static(__dirname));
 
@@ -22,51 +43,62 @@ var gameCollection =  new function() {
 
 
 
-
-function buildGame(username) {
-
-
-  var gameObject = {};
-  gameObject.id = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
-  gameObject.player1 = username;
-  gameObject.player2 = null;
-  gameObject.player3 = null;
-  gameObject.player4 = null;
-  gameObject.player5 = null;
-  gameObject.player6 = null;
-  gameObject.player7 = null;
-  gameObject.player8 = null;
-  gameCollection.totalGameCount ++;
-  gameCollection.gameList.push({gameObject});
- 
-  console.log("Game Created by "+ username + " w/ " + gameObject.id);
-  // console.log(gameCollection)
-
-  // var nsp = io.of('/'+gameObject.id);
-  // nsp.emit('gameCreated', {
-  //   username: username,
-  //   gameId: gameObject.id
-  // });
-
-  io.emit('gameCreated', {
-    username: username,
-    gameId: gameObject.id
-  });
-
-  // io.emit('gameCreated', {
-  //   username: username,
-  //   gameId: gameObject.id
-  // });
- 
- 
-}
-
-
 io.on('connection', function (socket) {
-  //when the client  requests to make a Game
+  // createGame: when the client  requests to make a Game
   socket.on('createGame', function (username) {
-    buildGame(username);
+    var gameObject = {};
+    gameObject.id = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+    gameObject.players =[socket, null, null, null, null, null, null, null];
+    // gameObject.player1 = socket;
+    // gameObject.player2 = null;
+    // gameObject.player3 = null;
+    // gameObject.player4 = null;
+    // gameObject.player5 = null;
+    // gameObject.player6 = null;
+    // gameObject.player7 = null;
+    // gameObject.player8 = null;
+    gameCollection.totalGameCount ++;
+    gameCollection.gameList.push({gameObject});
+   
+    socket.join(gameObject.id)
+  
+    console.log("Game Created by "+ username + " w/ " + gameObject.id);
+
+    io.sockets.in(gameObject.id).emit('gameCreated', {
+      username: username,
+      gameId: gameObject.id
+    });
   });
+
+  socket.on('joinGame', function (usernameJoin, accesscodeJoin) {
+    console.log(usernameJoin + " wants to join a game");
+
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
+      console.log(gameIdTmp);
+      if (gameIdTmp == accesscodeJoin){
+        //If the accesscode exists, add to game. Find first null and add to that playerno., then join that client to the socket.io room, and emit to all in the same room.
+        for (var j=0; j<8; i++){
+          // CONTINUE FROM HERE! THIS IS WHERE IT SCREWS UP! IM NOT FINDING THE PLAYERS PROPERLY....
+          console.log(gameCollection.gameList[i]['gameObject']['players'][j])
+          if (gameCollection.gameList[i]['gameObject']['players'][j] == null){
+            gameCollection.gameList[i]['gameObject']['players'][j] = username;
+            socket.join(gameCollection.gameList[i]['gameObject'][id]);
+            io.sockets.in(gameObject.id).emit('gameJoined', {
+              players: gameCollection.gameList[i]['gameObject']['players'],
+              gameId: gameCollection.gameList[i]['gameObject']['id']
+            });
+          }
+        }
+        //If we have looped through all players, and there is no null, then there is no more space in the lobby, and we need to notify the client
+        socket.emit('noPlayerSlotsAvailable')
+      }
+    }
+    
+    // if we cant find the access code, inform the client
+    socket.emit('cantFindGametoJoin')
+  });
+
 
 });
 
