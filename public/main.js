@@ -83,8 +83,8 @@ $createGame.click(function () {
 
 // Leave Game Button
 $leaveGame.click(function () {
-
-    //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game
+    
+    //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
 
     $homePage.show();
     $createPage.hide();
@@ -122,32 +122,21 @@ socket.on('gameCreated', function (data) {
 
 socket.on('gameJoined', function (data) {
     console.log("Game Joined! ID is: " + data.gameId)
-    
     $homePage.hide();
     $createPage.hide();
     $joinPage.hide();
     $lobbyPage.show();
     $gamePage.hide();
-
-    //
-
     // Display the access code
     var accesscodeDisplay = document.getElementById('accesscodeDisplay');
     accesscodeDisplay.innerHTML = data.gameId;
 
-    //DOESNT WORK AFTER THIS, IT DOESNT ADD THE INNERHTML
-
-    console.log("players: "+ data.players)
-    console.log("player3: "+ data.players[2])
     for (var i=0; i<8; i++){
         if (data.players[i] != null){
-            var playerDisplay = document.getElementById('player'+i+'Display');
-            playerDisplay.innerHTML = data.players;
+            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
+            playerDisplay.innerHTML = data.players[i];
         }
     }
-    
-
-
 });
 
 socket.on('cantFindGametoJoin', function(){

@@ -77,25 +77,13 @@ io.on('connection', function (socket) {
 
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
-      // console.log(gameCollection);
       if (gameIdTmp == accesscodeJoin){
         //If the accesscode exists, add to game. Find first null and add to that playerno., then join that client to the socket.io room, and emit to all in the same room.
-        // var gameIndex = i;
         var emptySlot = (gameCollection.gameList[i]['gameObject']['players']).indexOf(null);
         console.log('emptySlot:'+ emptySlot)
-        // for (var j=0; j<8; j++){
-          // CONTINUE FROM HERE! THIS IS WHERE IT SCREWS UP! IM NOT FINDING THE PLAYERS PROPERLY....
-          // console.log('iterationis: '+i)
-          // console.log(gameCollection.gameList[gameIndex]['gameObject']['players'][j])
-          // console.log('gameIndex: ' + gameIndex)
-          // console.log('this is numeroUNO')
-          // if (gameCollection.gameList[i]['gameObject']['players'][j] == null){
-            // console.log('number22boi!')
         if (emptySlot != -1){
           gameCollection.gameList[i]['gameObject']['players'][emptySlot] = usernameJoin;
           socket.join(gameCollection.gameList[i]['gameObject']['id']);
-          // console.log(gameCollection.gameList[i]['gameObject']['players'])
-
           io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {
             players: gameCollection.gameList[i]['gameObject']['players'],
             gameId: gameCollection.gameList[i]['gameObject']['id']
