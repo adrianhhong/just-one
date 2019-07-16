@@ -48,7 +48,7 @@ io.on('connection', function (socket) {
   socket.on('createGame', function (username) {
     var gameObject = {};
     gameObject.id = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
-    gameObject.players =[socket, null, null, null, null, null, null, null];
+    gameObject.players =[username, null, null, null, null, null, null, null];
     // gameObject.player1 = socket;
     // gameObject.player2 = null;
     // gameObject.player3 = null;
@@ -73,30 +73,47 @@ io.on('connection', function (socket) {
   socket.on('joinGame', function (usernameJoin, accesscodeJoin) {
     console.log(usernameJoin + " wants to join a game");
 
+    var canFindGametoJoin = false;
+
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
-      console.log(gameIdTmp);
+      // console.log(gameCollection);
       if (gameIdTmp == accesscodeJoin){
         //If the accesscode exists, add to game. Find first null and add to that playerno., then join that client to the socket.io room, and emit to all in the same room.
-        for (var j=0; j<8; i++){
+        // var gameIndex = i;
+        var emptySlot = (gameCollection.gameList[i]['gameObject']['players']).indexOf(null);
+        console.log('emptySlot:'+ emptySlot)
+        // for (var j=0; j<8; j++){
           // CONTINUE FROM HERE! THIS IS WHERE IT SCREWS UP! IM NOT FINDING THE PLAYERS PROPERLY....
-          console.log(gameCollection.gameList[i]['gameObject']['players'][j])
-          if (gameCollection.gameList[i]['gameObject']['players'][j] == null){
-            gameCollection.gameList[i]['gameObject']['players'][j] = username;
-            socket.join(gameCollection.gameList[i]['gameObject'][id]);
-            io.sockets.in(gameObject.id).emit('gameJoined', {
-              players: gameCollection.gameList[i]['gameObject']['players'],
-              gameId: gameCollection.gameList[i]['gameObject']['id']
-            });
-          }
+          // console.log('iterationis: '+i)
+          // console.log(gameCollection.gameList[gameIndex]['gameObject']['players'][j])
+          // console.log('gameIndex: ' + gameIndex)
+          // console.log('this is numeroUNO')
+          // if (gameCollection.gameList[i]['gameObject']['players'][j] == null){
+            // console.log('number22boi!')
+        if (emptySlot != -1){
+          gameCollection.gameList[i]['gameObject']['players'][emptySlot] = usernameJoin;
+          socket.join(gameCollection.gameList[i]['gameObject']['id']);
+          // console.log(gameCollection.gameList[i]['gameObject']['players'])
+
+          io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {
+            players: gameCollection.gameList[i]['gameObject']['players'],
+            gameId: gameCollection.gameList[i]['gameObject']['id']
+          });
         }
-        //If we have looped through all players, and there is no null, then there is no more space in the lobby, and we need to notify the client
-        socket.emit('noPlayerSlotsAvailable')
+        if (emptySlot == -1){
+          //If we have looped through all players, and there is no null, then there is no more space in the lobby, and we need to notify the client
+          socket.emit('noPlayerSlotsAvailable')
+        }
       }
+      canFindGametoJoin = true;
     }
     
     // if we cant find the access code, inform the client
-    socket.emit('cantFindGametoJoin')
+    if (canFindGametoJoin == false){
+      socket.emit('cantFindGametoJoin')
+    }
+    
   });
 
 

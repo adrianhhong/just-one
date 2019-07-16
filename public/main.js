@@ -123,22 +123,30 @@ socket.on('gameCreated', function (data) {
 socket.on('gameJoined', function (data) {
     console.log("Game Joined! ID is: " + data.gameId)
     
-    // Display the access code
-    var accesscodeDisplay = document.getElementById('accesscodeDisplay');
-    accesscodeDisplay.innerHTML = data.gameId;
-
-    var i=0;
-
-    while (data.players[i] != null){
-      var playerDisplay = document.getElementById('player'+i+'Display');
-      playerDisplay.innerHTML = data.players;
-    }
-
     $homePage.hide();
     $createPage.hide();
     $joinPage.hide();
     $lobbyPage.show();
     $gamePage.hide();
+
+    //
+
+    // Display the access code
+    var accesscodeDisplay = document.getElementById('accesscodeDisplay');
+    accesscodeDisplay.innerHTML = data.gameId;
+
+    //DOESNT WORK AFTER THIS, IT DOESNT ADD THE INNERHTML
+
+    console.log("players: "+ data.players)
+    console.log("player3: "+ data.players[2])
+    for (var i=0; i<8; i++){
+        if (data.players[i] != null){
+            var playerDisplay = document.getElementById('player'+i+'Display');
+            playerDisplay.innerHTML = data.players;
+        }
+    }
+    
+
 
 });
 
