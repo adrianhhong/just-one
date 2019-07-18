@@ -29,8 +29,9 @@ var $usernameJoinInput = $('.usernameJoinInput');
 
 
 
-// Usernames
+// Client's details
 var username;
+var gameCode;
 
 // Initial Socket connection
 var socket = io();
@@ -78,13 +79,13 @@ $backtoHome.click(function () {
 // Create Game Button
 $createGame.click(function () {
     username = $usernameInput.val().trim();
-    socket.emit('createGame', username);
+    socket.emit('createGame', username); 
 });
 
 // Leave Game Button
 $leaveGame.click(function () {
-    
     //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
+    socket.emit('leaveLobby', username, gameCode);
 
     $homePage.show();
     $createPage.hide();
@@ -97,12 +98,21 @@ $leaveGame.click(function () {
 $joinLobby.click(function () {
     var usernameJoin = $usernameJoinInput.val().trim();
     var accesscodeJoin = $accesscodeInput.val().trim();
+    username = usernameJoin;
+    gameCode = accesscodeJoin;
     socket.emit('joinGame', usernameJoin, accesscodeJoin);
 });
 
 
+
+
+
+
 socket.on('gameCreated', function (data) {
     console.log("Game Created! ID is: " + data.gameId)
+
+    gameCode = data.gameId;
+
     
     // Display the access code
     var accesscodeDisplay = document.getElementById('accesscodeDisplay');
@@ -110,6 +120,8 @@ socket.on('gameCreated', function (data) {
 
     var player1Display = document.getElementById('player1Display');
     player1Display.innerHTML = data.username;
+
+    // window.location.href = "/"+data.gameId;
 
 
     $homePage.hide();
@@ -122,6 +134,9 @@ socket.on('gameCreated', function (data) {
 
 socket.on('gameJoined', function (data) {
     console.log("Game Joined! ID is: " + data.gameId)
+
+    gameCode = data.gameId;
+
     $homePage.hide();
     $createPage.hide();
     $joinPage.hide();
@@ -136,8 +151,33 @@ socket.on('gameJoined', function (data) {
             var playerDisplay = document.getElementById('player'+(i+1)+'Display');
             playerDisplay.innerHTML = data.players[i];
         }
+        if (data.players[i] == null){
+            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
+            playerDisplay.innerHTML = '';
+        }            
     }
 });
+
+
+socket.on('removedPlayer', function (data) {
+
+    gameCode = data.gameId;
+    // Display the access code
+    var accesscodeDisplay = document.getElementById('accesscodeDisplay');
+    accesscodeDisplay.innerHTML = data.gameId;
+
+    for (var i=0; i<8; i++){
+        if (data.players[i] != null){
+            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
+            playerDisplay.innerHTML = data.players[i];
+        }
+        if (data.players[i] == null){
+            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
+            playerDisplay.innerHTML = '';
+        }            
+    }
+});
+
 
 socket.on('cantFindGametoJoin', function(){
     var noGameFoundDisplay = document.getElementById('noGameFound');
@@ -150,4 +190,10 @@ socket.on('noPlayerSlotsAvailable', function(){
     var noRoomDisplay = document.getElementById('noRoom');
     noRoomDisplay.innerHTML = "Sorry, that game room is full.";
     //Need to remove after like 5 sec. and fade out
+})
+
+socket.on('gameDestroyed', function(){
+    //reset username and gamecode
+    username = null;
+    gameCode = null;
 })

@@ -105,6 +105,55 @@ io.on('connection', function (socket) {
   });
 
 
+
+  socket.on('leaveLobby', function (username, gameCode) {
+    //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
+
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        var usernameIndex = (gameCollection.gameList[i]['gameObject']['players']).indexOf(username);
+        console.log('my username is :' +username)
+        console.log("the index position of the username is at this position: " + usernameIndex)
+        if (usernameIndex != -1){
+          if (usernameIndex == 0 && (gameCollection.gameList[i]['gameObject']['players']).indexOf(null) == 1){
+            --gameCollection.totalGameCount;
+            console.log("Destroy Game "+ gameCode + "!");
+            gameCollection.gameList.splice(i, 1); //remove that gameObject
+            console.log(gameCollection.gameList);
+            socket.leave(gameCode)
+            socket.emit('gameDestroyed')
+          }
+          else{
+            console.log(gameCollection.gameList[i]['gameObject']['players'])
+            console.log("the index position of the username is: " + usernameIndex)
+            gameCollection.gameList[i]['gameObject']['players'].splice(usernameIndex,1)
+            console.log(gameCollection.gameList[i]['gameObject']['players'])
+            gameCollection.gameList[i]['gameObject']['players'].push(null)
+            console.log(gameCollection.gameList[i]['gameObject']['players'])
+            console.log("Removed player: " + username + " from room " + gameCode)
+            io.sockets.in(gameCode).emit('removedPlayer', {
+              players: gameCollection.gameList[i]['gameObject']['players'],
+              gameId: gameCollection.gameList[i]['gameObject']['id']
+            });
+          }
+        }
+        if (username == -1){
+          console.log("Something terribly went wrong, can't find the username in the room")
+        }
+
+      }
+    }
+  });
+        
+
+
+
+  // If a user disconnects.
+  socket.on('disconnect', function () {
+    //Need to include this
+  });
+
 });
 
 
