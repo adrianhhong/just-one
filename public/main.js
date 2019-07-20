@@ -120,6 +120,8 @@ socket.on('gameCreated', function (data) {
 
     var player1Display = document.getElementById('player1Display');
     player1Display.innerHTML = data.username;
+    player1Display.style.color = '#FF0000' 
+
 
     // window.location.href = "/"+data.gameId;
 
@@ -150,6 +152,12 @@ socket.on('gameJoined', function (data) {
         if (data.players[i] != null){
             var playerDisplay = document.getElementById('player'+(i+1)+'Display');
             playerDisplay.innerHTML = data.players[i];
+            if (data.players[i] == username){
+                playerDisplay.style.color = '#FF0000' 
+            }
+            else{
+                playerDisplay.style.color = '#000000'
+            }
         }
         if (data.players[i] == null){
             var playerDisplay = document.getElementById('player'+(i+1)+'Display');
@@ -170,6 +178,12 @@ socket.on('removedPlayer', function (data) {
         if (data.players[i] != null){
             var playerDisplay = document.getElementById('player'+(i+1)+'Display');
             playerDisplay.innerHTML = data.players[i];
+            if (data.players[i] == username){
+                playerDisplay.style.color = '#FF0000' 
+            }
+            else{
+                playerDisplay.style.color = '#000000'
+            }
         }
         if (data.players[i] == null){
             var playerDisplay = document.getElementById('player'+(i+1)+'Display');
