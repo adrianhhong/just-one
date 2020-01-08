@@ -1,30 +1,40 @@
 
 //// Initialise variables /////
+var $doc = $(document);
 var $window = $(window);
 var $usernameInput = $('.usernameInput'); // Input for username
 var $messages = $('.messages'); // Messages area
 var $inputMessage = $('.inputMessage'); // Input message input box
 
 // Pages
-var $homePage = $('.home.page'); // The home page
-var $createPage = $('.create.page'); // The create game page
-var $joinPage = $('.join.page'); // The join game page
-var $lobbyPage = $('.lobby.page'); // The game lobby page
-var $gamePage = $('.game.page'); // The main game page
+var $pageArea = $('.page-area'); // The home page
+var $homePage = $('.home-page').html(); // The home page
+var $createPage = $('.create-page').html(); // The create game page
+var $joinPage = $('.join-page').html(); // The join game page
+var $lobbyPage = $('.lobby-page').html(); // The game lobby page
+var $gamePage = $('.game-page').html(); // The main game page
 
 // Buttons
-var $newGame = $('.newGame'); 
-var $joinGame = $('.joinGame'); 
-var $createGame = $('.createGame'); 
-var $backtoHome = $('.backtoHome'); 
-var $joinLobby = $('.joinLobby'); 
-var $startGame = $('.startGame'); 
-var $leaveGame = $('.leaveGame'); 
+$doc.on('click', '.newGame', onNewGameClick);
+$doc.on('click', '.joinGame', onJoinGameClick);
+$doc.on('click', '.createGame', onCreateGameClick);
+$doc.on('click', '.backtoHome', onBackToHomeClick);
+$doc.on('click', '.startGame', onStartGameClick);
+$doc.on('click', '.leaveGame', onLeaveGameClick);
+$doc.on('click', '.joinLobby', onJoinLobbyClick);
+
+// var $newGame = $('.newGame'); 
+// var $joinGame = $('.joinGame'); 
+// var $createGame = $('.createGame'); 
+// var $backtoHome = $('.backtoHome'); 
+// var $joinLobby = $('.joinLobby'); 
+// var $startGame = $('.startGame'); 
+// var $leaveGame = $('.leaveGame'); 
 
 // Input Text Fields
-var $usernameInput = $('.usernameInput');
-var $accesscodeInput =  $('.accesscodeInput');
-var $usernameJoinInput = $('.usernameJoinInput');
+// var $usernameInput = $('.usernameInput');
+// var $accesscodeInput =  $('.accesscodeInput');
+// var $usernameJoinInput = $('.usernameJoinInput');
 
 
 
@@ -36,72 +46,60 @@ var gameCode;
 // Initial Socket connection
 var socket = io();
 
+
 // Show Home Page initially
-$homePage.show();
-$createPage.hide();
-$joinPage.hide();
-$lobbyPage.hide();
-$gamePage.hide();
-
-
-
+$pageArea.html($homePage);
 
 
 //// Click Events /////
-
 // New Game Button
-$newGame.click(function () {
-    $homePage.hide();
-    $createPage.show();
-    $joinPage.hide();
-    $lobbyPage.hide();
-    $gamePage.hide();
-});
+function onNewGameClick() {
+    $pageArea.html($createPage);
+}
 
 // Join Game Button
-$joinGame.click(function () {
-    $homePage.hide();
-    $createPage.hide();
-    $joinPage.show();
-    $lobbyPage.hide();
-    $gamePage.hide();
-});
-
-// Back Button
-$backtoHome.click(function () {
-    $homePage.show();
-    $createPage.hide();
-    $joinPage.hide();
-    $lobbyPage.hide();
-    $gamePage.hide();
-});
+function onJoinGameClick() {
+    $pageArea.html($joinPage);
+}
 
 // Create Game Button
-$createGame.click(function () {
-    username = $usernameInput.val().trim();
+function onCreateGameClick() {
+    // username = $usernameInput.val().trim();
+    username = $('.usernameInput').val();
     socket.emit('createGame', username); 
-});
+}
+
+
+// Back Button
+function onBackToHomeClick() {
+    $pageArea.html($homePage);
+}
+
+// Start Game Button
+function onStartGameClick() {
+    // $pageArea.html($homePage);
+}
+
+
 
 // Leave Game Button
-$leaveGame.click(function () {
+function onLeaveGameClick() {
     //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
     socket.emit('leaveLobby', username, gameCode);
 
-    $homePage.show();
-    $createPage.hide();
-    $joinPage.hide();
-    $lobbyPage.hide();
-    $gamePage.hide();
-});
+    $pageArea.html($homePage);
+}
 
 // Join Lobby Button
-$joinLobby.click(function () {
-    var usernameJoin = $usernameJoinInput.val().trim();
-    var accesscodeJoin = $accesscodeInput.val().trim();
+function onJoinLobbyClick() {
+
+    usernameJoin = $('.usernameJoinInput').val();
+    accesscodeJoin = $('.accesscodeInput').val();
     username = usernameJoin;
     gameCode = accesscodeJoin;
     socket.emit('joinGame', usernameJoin, accesscodeJoin);
-});
+}
+
 
 
 
@@ -111,26 +109,17 @@ $joinLobby.click(function () {
 socket.on('gameCreated', function (data) {
     console.log("Game Created! ID is: " + data.gameId)
 
-    gameCode = data.gameId;
-
     
+    $pageArea.html($lobbyPage);
+
+    gameCode = data.gameId; 
+
     // Display the access code
-    var accesscodeDisplay = document.getElementById('accesscodeDisplay');
-    accesscodeDisplay.innerHTML = data.gameId;
+    $('#accesscodeDisplay').html(data.gameId);
 
-    var player1Display = document.getElementById('player1Display');
-    player1Display.innerHTML = data.username;
-    player1Display.style.color = '#FF0000' 
-
-
-    // window.location.href = "/"+data.gameId;
-
-
-    $homePage.hide();
-    $createPage.hide();
-    $joinPage.hide();
-    $lobbyPage.show();
-    $gamePage.hide();
+    // Display player 1
+    $('#player1Display').html(data.username);
+    $('#player1Display').css('color', '#FF0000');
 
 });
 
@@ -139,14 +128,9 @@ socket.on('gameJoined', function (data) {
 
     gameCode = data.gameId;
 
-    $homePage.hide();
-    $createPage.hide();
-    $joinPage.hide();
-    $lobbyPage.show();
-    $gamePage.hide();
+    $pageArea.html($lobbyPage);
     // Display the access code
-    var accesscodeDisplay = document.getElementById('accesscodeDisplay');
-    accesscodeDisplay.innerHTML = data.gameId;
+    $('#accesscodeDisplay').html(data.gameId);
 
     for (var i=0; i<8; i++){
         if (data.players[i] != null){
@@ -194,15 +178,13 @@ socket.on('removedPlayer', function (data) {
 
 
 socket.on('cantFindGametoJoin', function(){
-    var noGameFoundDisplay = document.getElementById('noGameFound');
-    noGameFoundDisplay.innerHTML = "Sorry, no game found with that access code.";
-    //Need to remove after like 5 sec. and fade out
+    $('#noGameFound').html("Sorry, no game found with that access code.");
+        //Need to remove after like 5 sec. and fade out
 })
 
 
 socket.on('noPlayerSlotsAvailable', function(){
-    var noRoomDisplay = document.getElementById('noRoom');
-    noRoomDisplay.innerHTML = "Sorry, that game room is full.";
+    $('#noRoom').html("Sorry, that game room is full.");
     //Need to remove after like 5 sec. and fade out
 })
 

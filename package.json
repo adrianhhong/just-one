@@ -1,7 +1,7 @@
 {
-  "name": "thechameleon",
+  "name": "insider",
   "version": "1.0.0",
-  "description": "The Chameleon Board Game interpreted as an online game",
+  "description": "Insider Board Game interpreted as an online game",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adrianhhong/thechameleon.git"
+    "url": "git+https://github.com/adrianhhong/insider.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/adrianhhong/thechameleon/issues"
+    "url": "https://github.com/adrianhhong/insider/issues"
   },
-  "homepage": "https://github.com/adrianhhong/thechameleon#readme",
+  "homepage": "https://github.com/adrianhhong/insider#readme",
   "dependencies": {
     "ejs": "^2.6.2",
     "express": "^4.17.1",

@@ -2,6 +2,12 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var path = require('path');
+
+// Create a simple Express application
+// Serve static html, js, css, and image files from the 'public' directory
+app.use(express.static(path.join(__dirname,'public')));
+
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
@@ -12,28 +18,28 @@ server.listen(port, function () {
 });
 
 // Setting up ejs views
-app.set('views', './views');
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
-app.use(express.urlencoded({ extened: true }))
+// app.set('views', './views');
+// app.set('view engine', 'ejs');
+// app.use(express.static('public'));
+// app.use(express.urlencoded({ extened: true }))
 
 // Routing
-const rooms ={}
+// const rooms ={}
 
-app.get('/', (req, res) => {
-  res.render('index', { rooms: rooms })
-})
+// app.get('/', (req, res) => {
+//   res.render('index', { rooms: rooms })
+// })
 
-app.get('/:room', (req, res) => {
-  res.render('room', {roomName: req.params.room})
-})
+// app.get('/:room', (req, res) => {
+//   res.render('room', {roomName: req.params.room})
+// })
 
 
 // app.post('/')
 
 
 // Routing
-app.use(express.static(__dirname));
+// app.use(express.static(__dirname));
 
 // Entire GameCollection Object holds all games and info (This is a singleton object) https://javascript.info/constructor-new
 var gameCollection =  new function() {
@@ -93,12 +99,13 @@ io.on('connection', function (socket) {
           //If we have looped through all players, and there is no null, then there is no more space in the lobby, and we need to notify the client
           socket.emit('noPlayerSlotsAvailable')
         }
+        canFindGametoJoin = true;
       }
-      canFindGametoJoin = true;
     }
     
     // if we cant find the access code, inform the client
     if (canFindGametoJoin == false){
+      console.log('Cant find game with that code')
       socket.emit('cantFindGametoJoin')
     }
     

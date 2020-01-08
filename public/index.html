@@ -2,31 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Chameleon</title>
+  <title>insider</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
+
 <body>
-  
 
+  <div class="page-area">
+    <!-- This is where the templates below will be shown -->
+  </div>
 
-
-  <div class="home page">
+  <script class="home-page" type="text/template">
     <h1> The Chameleon </h1>
     <div class='gameButtons'>
         <button class='newGame' placeholder="New Game">New Game</button>
         <button class='joinGame' placeholder="Join Game">Join Game</button>
     </div>
-  </div>
+  </script>
   
-  <div class="create page">
+  <script class="create-page" type="text/template">
     <input class="usernameInput" type="text" maxlength="14" placeholder="Enter your name"/>
     <div class='gameButtons'>
         <button class='createGame' placeholder="Create Game">Create</button>
         <button class='backtoHome' placeholder="Back">Back</button>
     </div>
-  </div>
+  </script>
 
-  <div class="join page">
+  <script class="join-page" type="text/template">
       <input class="usernameJoinInput" type="text" maxlength="14" placeholder="Enter your name"/>
       <input class="accesscodeInput" type="text" maxlength="4" placeholder="Enter an access code"/>
       <p id="noGameFound"></p>
@@ -35,12 +38,11 @@
         <button class='joinLobby' placeholder="Join">Join</button>
         <button class='backtoHome' placeholder="Back">Back</button>
     </div>
-    </div>
+  </script>
 
-  <div class="lobby page">
+  <script class="lobby-page" type="text/template">
     <h2>Waiting for players...</h2>
-    <h3>Access code: </h3>
-    <h3 id=accesscodeDisplay></h3>
+    <h3>Access code: </h3> <span id=accesscodeDisplay>####</span>
     <ol>
       <li id = player1Display></li>
       <li id = player2Display></li>
@@ -56,21 +58,21 @@
       <button class='startGame' placeholder="Start Game">Start Game</button>
       <button class='leaveGame' placeholder="Leave Game">Leave Game</button>
     </div>
-  </div>
+  </script>
 
-  <div class="game page">
-      <input class="usernameInput" type="text" maxlength="14" placeholder="Enter your name"/>
-      <input class="accesscodeInput" type="text" maxlength="4" placeholder="Enter an access code"/>
-  </div>
+  <script class="game-page" type="text/template">
+    <h1> Timer </h1>
+    <h1> Role </h1>
+    <h2> Players </h2>
+  </script>
 
-
+  
+  <!-- Javascript Libraries -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>-->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script> -->
   <script src="/main.js"></script>
 
 
 </body>
-
-
 </html>
