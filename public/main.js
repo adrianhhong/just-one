@@ -1,4 +1,3 @@
-
 //// Initialise variables /////
 var $doc = $(document);
 var $window = $(window);
@@ -23,22 +22,6 @@ $doc.on('click', '.startGame', onStartGameClick);
 $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
 
-// var $newGame = $('.newGame'); 
-// var $joinGame = $('.joinGame'); 
-// var $createGame = $('.createGame'); 
-// var $backtoHome = $('.backtoHome'); 
-// var $joinLobby = $('.joinLobby'); 
-// var $startGame = $('.startGame'); 
-// var $leaveGame = $('.leaveGame'); 
-
-// Input Text Fields
-// var $usernameInput = $('.usernameInput');
-// var $accesscodeInput =  $('.accesscodeInput');
-// var $usernameJoinInput = $('.usernameJoinInput');
-
-
-
-
 // Client's details
 var username;
 var gameCode;
@@ -46,12 +29,13 @@ var gameCode;
 // Initial Socket connection
 var socket = io();
 
-
 // Show Home Page initially
 $pageArea.html($homePage);
 
 
-//// Click Events /////
+/* *************************
+   *      BUTTON LOGIC       *
+   ************************* */
 // New Game Button
 function onNewGameClick() {
     $pageArea.html($createPage);
@@ -69,7 +53,6 @@ function onCreateGameClick() {
     socket.emit('createGame', username); 
 }
 
-
 // Back Button
 function onBackToHomeClick() {
     $pageArea.html($homePage);
@@ -77,12 +60,10 @@ function onBackToHomeClick() {
 
 // Start Game Button
 function onStartGameClick() {
-    // $pageArea.html($homePage);
+    socket.emit('startGame', username, gameCode); 
 }
 
-
-
-// Leave Game Button
+// Leave Lobby Button
 function onLeaveGameClick() {
     //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
     socket.emit('leaveLobby', username, gameCode);
@@ -101,10 +82,38 @@ function onJoinLobbyClick() {
 }
 
 
+/* *************************
+   *      OTHER FUNCTIONS       *
+   ************************* */
 
+// Refresh the lobby page to show updated players
+function refreshPlayers(data) {
+    gameCode = data.gameId;
 
+    // Display the access code
+    $('#accesscodeDisplay').html(data.gameId);
 
+    for (var i=0; i<8; i++){
+        if (data.players[i] != null){
+            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
+            playerDisplay.innerHTML = data.players[i];
+            if (data.players[i] == username){
+                playerDisplay.style.color = '#FF0000' 
+            }
+            else{
+                playerDisplay.style.color = '#000000'
+            }
+        }
+        if (data.players[i] == null){
+            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
+            playerDisplay.innerHTML = '';
+        }            
+    }
+}
 
+/* *************************
+   *      SOCKET.IO LOGIC       *
+   ************************* */
 
 socket.on('gameCreated', function (data) {
     console.log("Game Created! ID is: " + data.gameId)
@@ -125,55 +134,13 @@ socket.on('gameCreated', function (data) {
 
 socket.on('gameJoined', function (data) {
     console.log("Game Joined! ID is: " + data.gameId)
-
-    gameCode = data.gameId;
-
     $pageArea.html($lobbyPage);
-    // Display the access code
-    $('#accesscodeDisplay').html(data.gameId);
-
-    for (var i=0; i<8; i++){
-        if (data.players[i] != null){
-            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
-            playerDisplay.innerHTML = data.players[i];
-            if (data.players[i] == username){
-                playerDisplay.style.color = '#FF0000' 
-            }
-            else{
-                playerDisplay.style.color = '#000000'
-            }
-        }
-        if (data.players[i] == null){
-            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
-            playerDisplay.innerHTML = '';
-        }            
-    }
+    refreshPlayers(data);
 });
 
 
 socket.on('removedPlayer', function (data) {
-
-    gameCode = data.gameId;
-    // Display the access code
-    var accesscodeDisplay = document.getElementById('accesscodeDisplay');
-    accesscodeDisplay.innerHTML = data.gameId;
-
-    for (var i=0; i<8; i++){
-        if (data.players[i] != null){
-            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
-            playerDisplay.innerHTML = data.players[i];
-            if (data.players[i] == username){
-                playerDisplay.style.color = '#FF0000' 
-            }
-            else{
-                playerDisplay.style.color = '#000000'
-            }
-        }
-        if (data.players[i] == null){
-            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
-            playerDisplay.innerHTML = '';
-        }            
-    }
+    refreshPlayers(data);
 });
 
 

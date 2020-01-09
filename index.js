@@ -4,6 +4,9 @@ var app = express();
 var fs = require('fs');
 var path = require('path');
 
+// Import the wordPool.
+var words = require('./words');
+
 // Create a simple Express application
 // Serve static html, js, css, and image files from the 'public' directory
 app.use(express.static(path.join(__dirname,'public')));
@@ -17,29 +20,6 @@ server.listen(port, function () {
   fs.writeFile(__dirname + '/start.log', 'started'); 
 });
 
-// Setting up ejs views
-// app.set('views', './views');
-// app.set('view engine', 'ejs');
-// app.use(express.static('public'));
-// app.use(express.urlencoded({ extened: true }))
-
-// Routing
-// const rooms ={}
-
-// app.get('/', (req, res) => {
-//   res.render('index', { rooms: rooms })
-// })
-
-// app.get('/:room', (req, res) => {
-//   res.render('room', {roomName: req.params.room})
-// })
-
-
-// app.post('/')
-
-
-// Routing
-// app.use(express.static(__dirname));
 
 // Entire GameCollection Object holds all games and info (This is a singleton object) https://javascript.info/constructor-new
 var gameCollection =  new function() {
@@ -47,24 +27,42 @@ var gameCollection =  new function() {
   this.gameList = []
 };
 
+// Record all socket connections allClients = { socket1: [roomid1, username1], socket2: [roomid2, username2] }
+var allClients = {};
+
+
+
 
 
 io.on('connection', function (socket) {
-  // createGame: when the client  requests to make a Game
+
+  // createGame: when the client requests to make a Game
   socket.on('createGame', function (username) {
     var gameObject = {};
-    gameObject.id = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+    var newRoom = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+    // If theres already some rooms, check if there is a duplicate
+    var duplicateRoom = true;
+    if (gameCollection.totalGameCount != 0){
+      while (duplicateRoom == true){
+        var newRoom = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+        for(var i = 0; i < gameCollection.totalGameCount; i++){
+          var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
+          duplicateRoom = false;
+          if (gameIdTmp == newRoom){
+            duplicateRoom = true;
+            console.log("Duplicate room found");
+            break;
+          }
+        }
+      }
+    }
+
+    gameObject.id = newRoom;
     gameObject.players =[username, null, null, null, null, null, null, null];
-    // gameObject.player1 = socket;
-    // gameObject.player2 = null;
-    // gameObject.player3 = null;
-    // gameObject.player4 = null;
-    // gameObject.player5 = null;
-    // gameObject.player6 = null;
-    // gameObject.player7 = null;
-    // gameObject.player8 = null;
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
+
+    allClients[socket.id] = [newRoom, username] // Adding a client
    
     socket.join(gameObject.id)
   
@@ -77,16 +75,17 @@ io.on('connection', function (socket) {
   });
 
   socket.on('joinGame', function (usernameJoin, accesscodeJoin) {
-    console.log(usernameJoin + " wants to join a game");
+    console.log(usernameJoin + " wants to join a game"); // NEED TO CHECK IF THERE IS ANY DUPLICATE USERNAMES
 
     var canFindGametoJoin = false;
 
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
       if (gameIdTmp == accesscodeJoin){
+
         //If the accesscode exists, add to game. Find first null and add to that playerno., then join that client to the socket.io room, and emit to all in the same room.
         var emptySlot = (gameCollection.gameList[i]['gameObject']['players']).indexOf(null);
-        console.log('emptySlot:'+ emptySlot)
+        // console.log('emptySlot:'+ emptySlot)
         if (emptySlot != -1){
           gameCollection.gameList[i]['gameObject']['players'][emptySlot] = usernameJoin;
           socket.join(gameCollection.gameList[i]['gameObject']['id']);
@@ -94,6 +93,7 @@ io.on('connection', function (socket) {
             players: gameCollection.gameList[i]['gameObject']['players'],
             gameId: gameCollection.gameList[i]['gameObject']['id']
           });
+          allClients[socket.id] = [accesscodeJoin, usernameJoin] // Adding a client
         }
         if (emptySlot == -1){
           //If we have looped through all players, and there is no null, then there is no more space in the lobby, and we need to notify the client
@@ -114,30 +114,25 @@ io.on('connection', function (socket) {
 
 
   socket.on('leaveLobby', function (username, gameCode) {
+    delete allClients[socket.id]; //Removing a client
     //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
-
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
         var usernameIndex = (gameCollection.gameList[i]['gameObject']['players']).indexOf(username);
-        console.log('my username is :' +username)
-        console.log("the index position of the username is at this position: " + usernameIndex)
         if (usernameIndex != -1){
+          // Destroy entire room if there is only 1 person in the room
           if (usernameIndex == 0 && (gameCollection.gameList[i]['gameObject']['players']).indexOf(null) == 1){
             --gameCollection.totalGameCount;
-            console.log("Destroy Game "+ gameCode + "!");
+            console.log("Destroyed room "+ gameCode);
             gameCollection.gameList.splice(i, 1); //remove that gameObject
-            console.log(gameCollection.gameList);
-            socket.leave(gameCode)
+            socket.leave(gameCode) // Unlike when we disconnect, we have to leave the socket.io room
             socket.emit('gameDestroyed')
           }
+          // Removing player from room if 2 or more people in room
           else{
-            console.log(gameCollection.gameList[i]['gameObject']['players'])
-            console.log("the index position of the username is: " + usernameIndex)
             gameCollection.gameList[i]['gameObject']['players'].splice(usernameIndex,1)
-            console.log(gameCollection.gameList[i]['gameObject']['players'])
             gameCollection.gameList[i]['gameObject']['players'].push(null)
-            console.log(gameCollection.gameList[i]['gameObject']['players'])
             console.log("Removed player: " + username + " from room " + gameCode)
             io.sockets.in(gameCode).emit('removedPlayer', {
               players: gameCollection.gameList[i]['gameObject']['players'],
@@ -154,11 +149,70 @@ io.on('connection', function (socket) {
   });
         
 
+  socket.on('startGame', function (username, gameCode) {
+    var randomWord = words.wordPool[Math.floor(Math.random()*words.wordPool.length)];
+    i=0;
+    console.log(gameCollection.gameList[i]['gameObject']['players']);
+
+    // Randomise the roles, send the roles to all users.
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        //Assign the master
+          /* *************************
+   *      I HAVENT FINISHED THIS YET*
+   ************************* */
+      }
+    }
+    
+
+    // io.sockets.in(gameObject.id).emit('gameCreated', {
+    //   username: username,
+    //   gameId: gameObject.id
+    // });
+  });
 
 
   // If a user disconnects.
   socket.on('disconnect', function () {
-    //Need to include this
+    //Need to check if theres actually the socket.id in the allClients list first
+    if (socket.id in allClients){
+      console.log("A user has disconnected, removing " + allClients[socket.id][1] + " from " + allClients[socket.id][0] )
+      var username = allClients[socket.id][1];
+      var gameCode = allClients[socket.id][0]
+      //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
+      for(var i = 0; i < gameCollection.totalGameCount; i++){
+        var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+        if (gameIdTmp == gameCode){
+          var usernameIndex = (gameCollection.gameList[i]['gameObject']['players']).indexOf(username);
+          if (usernameIndex != -1){
+            // Destroy entire room if there is only 1 person in the room
+            if (usernameIndex == 0 && (gameCollection.gameList[i]['gameObject']['players']).indexOf(null) == 1){
+              --gameCollection.totalGameCount;
+              console.log("Destroyed room "+ gameCode);
+              gameCollection.gameList.splice(i, 1); //remove that gameObject
+              // socket.leave(gameCode)
+              socket.emit('gameDestroyed')
+            }
+            // Removing player from room if 2 or more people in room
+            else{
+              gameCollection.gameList[i]['gameObject']['players'].splice(usernameIndex,1)
+              gameCollection.gameList[i]['gameObject']['players'].push(null)
+              console.log("Removed player: " + username + " from room " + gameCode)
+              io.sockets.in(gameCode).emit('removedPlayer', {
+                players: gameCollection.gameList[i]['gameObject']['players'],
+                gameId: gameCollection.gameList[i]['gameObject']['id']
+              });
+            }
+          }
+          if (username == -1){
+            console.log("Something terribly went wrong, can't find the username in the room")
+          }
+
+        }
+      }
+      delete allClients[socket.id]; //Removing a client
+    }
   });
 
 });
