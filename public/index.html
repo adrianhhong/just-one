@@ -2,80 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="style.css">
   <title>insider</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 
 
 <body>
 
-  <div class="page-area">
+  <div class="page-area text-center">
     <!-- This is where the templates below will be shown -->
   </div>
 
   <script class="home-page" type="text/template">
-    <h1> The Chameleon </h1>
-    <div class='gameButtons'>
-        <button class='newGame' placeholder="New Game">New Game</button>
-        <button class='joinGame' placeholder="Join Game">Join Game</button>
+    <h1> Insider </h1>
+    <hr>
+    <br>
+    <div class="gameButtons">
+        <button class="newGame btn-custom" placeholder="New Game">New Game</button>
+        <button class="joinGame btn-custom" placeholder="Join Game">Join Game</button>
     </div>
+    <br>
+    <hr>
+    <small>Based off Insider by Oink Games</small>
+    <br>
+    <small>Adrian Hong</small>
   </script>
   
   <script class="create-page" type="text/template">
+    <h1> Insider </h1>
+    <hr>
+    <br>
     <input class="usernameInput" type="text" maxlength="14" placeholder="Enter your name"/>
-    <div class='gameButtons'>
-        <button class='createGame' placeholder="Create Game">Create</button>
-        <button class='backtoHome' placeholder="Back">Back</button>
+    <br>
+    <br>
+    <div class="gameButtons">
+        <button class="createGame btn-custom" placeholder="Create Game">Create</button>
+        <button class="backtoHome btn-custom" placeholder="Back">Back</button>
     </div>
   </script>
 
   <script class="join-page" type="text/template">
-      <input class="usernameJoinInput" type="text" maxlength="14" placeholder="Enter your name"/>
-      <input class="accesscodeInput" type="text" maxlength="4" placeholder="Enter an access code"/>
-      <p id="noGameFound"></p>
-      <p id="noRoom"></p>
-      <div class='gameButtons'>
-        <button class='joinLobby' placeholder="Join">Join</button>
-        <button class='backtoHome' placeholder="Back">Back</button>
+    <h1> Insider </h1>
+    <hr>
+    <br>
+    <input class="usernameJoinInput" type="text" maxlength="14" placeholder="Enter your name"/>
+    <input class="accesscodeInput" type="text" maxlength="4" placeholder="Enter an access code"/>
+    <br>
+    <br>
+    <p id="noGameFound"></p>
+    <p id="noRoom"></p>
+    <div class="gameButtons">
+      <button class="joinLobby btn-custom" placeholder="Join">Join</button>
+      <button class="backtoHome btn-custom" placeholder="Back">Back</button>
     </div>
   </script>
 
   <script class="lobby-page" type="text/template">
-    <h2>Waiting for players...</h2>
-    <h3>Access code: </h3> <span id=accesscodeDisplay>####</span>
-    <ol>
-      <li id = player1Display></li>
-      <li id = player2Display></li>
-      <li id = player3Display></li>
-      <li id = player4Display></li>
-      <li id = player5Display></li>
-      <li id = player6Display></li>
-      <li id = player7Display></li>
-      <li id = player8Display></li>
-    </ol>
+    <h1> Insider </h1>
+    <hr>
+    <h6>Access code: </h6>
+    <div class="gameButtons">
+      <button class="copyCode">
+        <span id="accesscodeDisplay"></span>
+        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 14 16" class="css-104tgp2" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2 13h4v1H2v-1zm5-6H2v1h5V7zm2 3V8l-3 3 3 3v-2h5v-2H9zM4.5 9H2v1h2.5V9zM2 12h2.5v-1H2v1zm9 1h1v2c-.02.28-.11.52-.3.7-.19.18-.42.28-.7.3H1c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h3c0-1.11.89-2 2-2 1.11 0 2 .89 2 2h3c.55 0 1 .45 1 1v5h-1V6H1v9h10v-2zM2 5h8c0-.55-.45-1-1-1H8c-.55 0-1-.45-1-1s-.45-1-1-1-1 .45-1 1-.45 1-1 1H3c-.55 0-1 .45-1 1z"></path></svg>
+      </button>
+    </div>
+    <small>Tell your friends to join using this code!</small>
+    <br>
+    <br>
+    <br>
+    <h6>Players: </h6>
+    <div class="row players-container">
+      <div class="col-5">
+        <ol class="row">
+          <li id = player1Display class="col-12 player-box"></li>
+          <li id = player2Display class="col-12 player-box"></li>
+          <li id = player3Display class="col-12 player-box"></li>
+          <li id = player4Display class="col-12 player-box"></li>
+          <li id = player5Display class="col-12 player-box"></li>
+          <li id = player6Display class="col-12 player-box"></li>
+          <li id = player7Display class="col-12 player-box"></li>
+          <li id = player8Display class="col-12 player-box"></li>
+        </ol>
+      </div>
+    </div>
     
-    <div class='gameButtons'>
-      <button class='startGame' placeholder="Start Game">Start Game</button>
-      <button class='leaveGame' placeholder="Leave Game">Leave Game</button>
+    <div class="gameButtons">
+      <button class="startGame btn-custom" placeholder="Start Game">Start Game</button>
+      <button class="leaveGame btn-custom" placeholder="Leave Game">Leave Game</button>
     </div>
   </script>
 
   <script class="role-page" type="text/template">
-    <h1> Role </h1>
-    <h1 id=roleDisplay></h1>
+    <h2> Role </h2>
+    <h2 id=roleDisplay></h2>
     <p id=roledescriptionDisplay></p>
   </script>
 
   <script class="role-page-master" type="text/template">
-    <h1> Role </h1>
-    <h1 id=roleDisplay></h1>
+    <h2> Role </h2>
+    <h2 id=roleDisplay></h2>
     <p id=roledescriptionDisplay></p>
   </script>
 
   <script class="game-page" type="text/template">
-    <h1> Timer </h1>
-    <h1> Role </h1>
-    <h2> Players </h2>
+    <h2> Timer </h2>
+    <h2> Role </h2>
+    <h4> Players </h4>
     <ol>
       <li id = player1Display></li>
       <li id = player2Display></li>
@@ -93,6 +128,11 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script> -->
+  <!-- Bootstrap JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
   <script src="/main.js"></script>
 
 

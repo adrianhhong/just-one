@@ -1,0 +1,57 @@
+:root {
+  --primary-color: #9A97F3;
+  --secondary-color: #818cab;
+  --font-color: #e1e1ff;
+  --bg-color: #161625;
+  --heading-color: #818cab;
+  --break-color: #e1e1ff
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+
+hr {
+  border-color: var(--break-color);
+  box-sizing: content-box;
+  width: 300px;
+}
+
+.btn-custom {
+  width: 110px !important;
+}
+
+.row {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.player-box {
+  background-color: var(--font-color);
+  color: var(--secondary-color);
+  padding: 5px;
+  margin-top: -1px;
+  margin-left: -1px;
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+
+.players-container {
+  width: 1000px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+/* Style the list (remove margins and bullets, etc) */
+ol {
+  list-style-type: none;
+  /* padding: 0;
+  margin: 0; */
+}
+
+  

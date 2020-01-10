@@ -21,6 +21,7 @@ $doc.on('click', '.backtoHome', onBackToHomeClick);
 $doc.on('click', '.startGame', onStartGameClick);
 $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
+$doc.on('click', '.copyCode', onAccessCodeDisplayClick);
 
 // Client's details
 var username;
@@ -81,6 +82,15 @@ function onJoinLobbyClick() {
     socket.emit('joinGame', usernameJoin, accesscodeJoin);
 }
 
+// Access Code Copy Button, copy text to clipboard when pressed
+function onAccessCodeDisplayClick() {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val(gameCode).select();
+    document.execCommand("copy");
+    $temp.remove();
+}
+
 
 /* *************************
    *      OTHER FUNCTIONS       *
@@ -91,7 +101,7 @@ function refreshPlayers(data) {
     gameCode = data.gameId;
 
     // Display the access code
-    $('#accesscodeDisplay').html(data.gameId);
+    $('.accesscodeDisplay').html(data.gameId);
 
     for (var i=0; i<8; i++){
         if (data.players[i] != null){
