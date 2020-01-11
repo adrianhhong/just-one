@@ -1,6 +1,9 @@
 {
   "name": "insider",
   "version": "1.0.0",
+  "engines": {
+    "node": "8.11.2"
+  }
   "description": "Insider Board Game interpreted as an online game",
   "main": "index.js",
   "scripts": {
@@ -20,7 +23,7 @@
   "dependencies": {
     "ejs": "^2.6.2",
     "express": "^4.17.1",
-    "npm": "^6.10.1",
+    "npm": "^6.13.6",
     "socket.io": "^2.2.0"
   }
 }
