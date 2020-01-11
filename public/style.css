@@ -34,11 +34,12 @@ hr {
 .player-box {
   background-color: var(--font-color);
   color: var(--secondary-color);
-  padding: 5px;
+  padding: 4px;
   margin-top: -1px;
   margin-left: -1px;
   border: 1px solid white;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 .players-container {
