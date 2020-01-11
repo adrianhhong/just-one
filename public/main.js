@@ -101,7 +101,7 @@ function refreshPlayers(data) {
     gameCode = data.gameId;
 
     // Display the access code
-    $('.accesscodeDisplay').html(data.gameId);
+    $('#accesscodeDisplay').html(data.gameId);
 
     for (var i=0; i<8; i++){
         if (data.players[i] != null){

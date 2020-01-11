@@ -4,7 +4,9 @@
   --font-color: #e1e1ff;
   --bg-color: #161625;
   --heading-color: #818cab;
-  --break-color: #e1e1ff
+  --break-color: #e1e1ff;
+  /* position: relative; */
+  /* height: 100vh; */
 }
 
 body {
@@ -12,10 +14,18 @@ body {
   color: var(--font-color);
 }
 
+.page-area {
+  max-width: 500px;
+  position: relative;
+  margin: 0 auto;
+  padding: 30px;
+  height: 100vh;
+}
+
 hr {
   border-color: var(--break-color);
   box-sizing: content-box;
-  width: 300px;
+  /* width: 300px; */
 }
 
 .btn-custom {
