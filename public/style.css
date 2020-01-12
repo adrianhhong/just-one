@@ -5,21 +5,27 @@
   --bg-color: #161625;
   --heading-color: #818cab;
   --break-color: #e1e1ff;
-  /* position: relative; */
-  /* height: 100vh; */
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--font-color);
+
+  /* padding-left: calc(50% - 300px);
+  padding-right: calc(50% - 300px); */
+  display: block;
+  text-align: center;
+  text-align: -webkit-center;
 }
 
 .page-area {
-  max-width: 500px;
+  /* max-width: 500px;
   position: relative;
   margin: 0 auto;
   padding: 30px;
-  height: 100vh;
+  height: 100vh; */
+  max-width: 300px;
+  /* width: 100%; */
 }
 
 hr {
@@ -32,37 +38,43 @@ hr {
   width: 110px !important;
 }
 
-.row {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
-}
-
-.player-box {
-  background-color: var(--font-color);
-  color: var(--secondary-color);
-  padding: 4px;
-  margin-top: -1px;
-  margin-left: -1px;
-  border: 1px solid white;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
 .players-container {
-  width: 1000px;
   margin: 0 auto;
   justify-content: center;
 }
 
+.player-box {
+  /* background-color: var(--font-color);
+  color: var(--secondary-color); */
+  /* padding: 4px;
+  margin-top: -1px;
+  margin-left: -1px;
+  border: 1px solid white;
+  border-collapse: collapse;
+  font-size: 14px; */
+  list-style-type: none;
+  display: block;
+  width: 70%;
+  padding-left: 0;
+  border-left: 4px #eee solid;
+  background-color: #eee;
+  padding: 5px 15px;
+  margin: 3px;
+  text-align: left;
+}
+
+
+
+
 /* Style the list (remove margins and bullets, etc) */
 ol {
   list-style-type: none;
+  width: 100%;
   /* padding: 0;
   margin: 0; */
 }
 
   
+#canvas {
+  border: 2px solid white;
+}

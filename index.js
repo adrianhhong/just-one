@@ -8,7 +8,7 @@ var path = require('path');
 var words = require('./words');
 
 // Create a simple Express application
-// Serve static html, js, css, and image files from the 'public' directory
+// Serve static html, js, css, and image files from the 'public' directory. i.e. these are user files
 app.use(express.static(path.join(__dirname,'public')));
 
 var server = require('http').createServer(app);

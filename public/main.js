@@ -61,7 +61,61 @@ function onBackToHomeClick() {
 
 // Start Game Button
 function onStartGameClick() {
-    socket.emit('startGame', username, gameCode); 
+    // socket.emit('startGame', username, gameCode); 
+
+    $pageArea.html($gamePage);
+
+    const canvas = document.querySelector("#canvas");
+    const ctx = canvas.getContext("2d");
+
+    //Resizing
+    canvas.height = 300;
+    canvas.width = 300;
+
+    let painting = false;
+    let lineComplete = false;
+
+    function startPosition(){
+        if (lineComplete) return;
+        painting = true;
+        draw(e);
+    }
+
+    function finishedPosition(){
+        painting = false;
+        ctx.beginPath()
+        lineComplete = true;
+    }
+    
+    function draw(e) {
+        if (!painting) return;
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "red";
+        var pos = getMousePos(canvas, e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
+
+    function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: (evt.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+            y: (evt.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+        };
+    }
+
+    canvas.addEventListener("mousedown", startPosition);
+    canvas.addEventListener("mouseup", finishedPosition);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("touchstart", startPosition);
+    canvas.addEventListener("touchmove", finishedPosition);
+    canvas.addEventListener("touchend", draw);
+
+
+
 }
 
 // Leave Lobby Button

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -10,13 +11,15 @@
 
 
 <body>
-
+  
   <div class="page-area text-center">
     <!-- This is where the templates below will be shown -->
   </div>
 
+
+
   <script class="home-page" type="text/template">
-    <h1> Insider </h1>
+    <h1>Insider</h1>
     <hr>
     <br>
     <div class="gameButtons">
@@ -73,20 +76,18 @@
     <br>
     <br>
     <br>
-    <h6>Players: </h6>
-    <div class="row players-container">
-      <div class="col-5">
-        <ol class="row">
-          <li id = player1Display class="col-12 player-box"></li>
-          <li id = player2Display class="col-12 player-box"></li>
-          <li id = player3Display class="col-12 player-box"></li>
-          <li id = player4Display class="col-12 player-box"></li>
-          <li id = player5Display class="col-12 player-box"></li>
-          <li id = player6Display class="col-12 player-box"></li>
-          <li id = player7Display class="col-12 player-box"></li>
-          <li id = player8Display class="col-12 player-box"></li>
-        </ol>
-      </div>
+    <h6>Players:</h6>
+    <div class="row d-flex players-container">
+      <ol>
+        <li id = player1Display class="player-box"></li>
+        <li id = player2Display class="player-box"></li>
+        <li id = player3Display class="player-box"></li>
+        <li id = player4Display class="player-box"></li>
+        <li id = player5Display class="player-box"></li>
+        <li id = player6Display class="player-box"></li>
+        <li id = player7Display class="player-box"></li>
+        <li id = player8Display class="player-box"></li>
+      </ol>
     </div>
     
     <div class="gameButtons">
@@ -95,7 +96,7 @@
     </div>
   </script>
 
-  <script class="role-page" type="text/template">
+  <!-- <script class="role-page" type="text/template">
     <h2> Role </h2>
     <h2 id=roleDisplay></h2>
     <p id=roledescriptionDisplay></p>
@@ -105,7 +106,7 @@
     <h2> Role </h2>
     <h2 id=roleDisplay></h2>
     <p id=roledescriptionDisplay></p>
-  </script>
+  </script> -->
 
   <script class="game-page" type="text/template">
     <h2> Timer </h2>
@@ -121,6 +122,7 @@
       <li id = player7Display></li>
       <li id = player8Display></li>
     </ol>
+    <canvas id="canvas"></canvas>
   </script>
 
   
