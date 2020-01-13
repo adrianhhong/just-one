@@ -17,7 +17,9 @@ var port = process.env.PORT || 3000;
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
-  fs.writeFile(__dirname + '/start.log', 'started'); 
+  fs.writeFile(__dirname + '/start.log', 'started', function(err, result) {
+    if (err) console.log('error', err);
+  }); 
 });
 
 

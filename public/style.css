@@ -24,7 +24,7 @@ body {
   margin: 0 auto;
   padding: 30px;
   height: 100vh; */
-  max-width: 300px;
+  max-width: 500px;
   /* width: 100%; */
 }
 
@@ -43,28 +43,13 @@ hr {
   justify-content: center;
 }
 
-.player-box {
-  /* background-color: var(--font-color);
-  color: var(--secondary-color); */
-  /* padding: 4px;
-  margin-top: -1px;
-  margin-left: -1px;
-  border: 1px solid white;
-  border-collapse: collapse;
-  font-size: 14px; */
-  list-style-type: none;
-  display: block;
-  width: 70%;
-  padding-left: 0;
-  border-left: 4px #eee solid;
-  background-color: #eee;
-  padding: 5px 15px;
-  margin: 3px;
-  text-align: left;
+ul.list-group {
+  padding-bottom: 1em;
 }
 
-
-
+.players-container {
+  width: 70%;
+}
 
 /* Style the list (remove margins and bullets, etc) */
 ol {
