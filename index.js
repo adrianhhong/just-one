@@ -60,7 +60,7 @@ io.on('connection', function (socket) {
     }
 
     gameObject.id = newRoom;
-    gameObject.players =[username, null, null, null, null, null, null, null];
+    gameObject.players = [username];
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
 
@@ -84,12 +84,8 @@ io.on('connection', function (socket) {
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
       if (gameIdTmp == accesscodeJoin){
-
-        //If the accesscode exists, add to game. Find first null and add to that playerno., then join that client to the socket.io room, and emit to all in the same room.
-        var emptySlot = (gameCollection.gameList[i]['gameObject']['players']).indexOf(null);
-        // console.log('emptySlot:'+ emptySlot)
-        if (emptySlot != -1){
-          gameCollection.gameList[i]['gameObject']['players'][emptySlot] = usernameJoin;
+        if (gameCollection.gameList[i]['gameObject']['players'].length < 8){
+          gameCollection.gameList[i]['gameObject']['players'].push(usernameJoin)
           socket.join(gameCollection.gameList[i]['gameObject']['id']);
           io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {
             players: gameCollection.gameList[i]['gameObject']['players'],
@@ -97,8 +93,7 @@ io.on('connection', function (socket) {
           });
           allClients[socket.id] = [accesscodeJoin, usernameJoin] // Adding a client
         }
-        if (emptySlot == -1){
-          //If we have looped through all players, and there is no null, then there is no more space in the lobby, and we need to notify the client
+        else{
           socket.emit('noPlayerSlotsAvailable')
         }
         canFindGametoJoin = true;
@@ -124,7 +119,7 @@ io.on('connection', function (socket) {
         var usernameIndex = (gameCollection.gameList[i]['gameObject']['players']).indexOf(username);
         if (usernameIndex != -1){
           // Destroy entire room if there is only 1 person in the room
-          if (usernameIndex == 0 && (gameCollection.gameList[i]['gameObject']['players']).indexOf(null) == 1){
+          if (usernameIndex == 0 && (gameCollection.gameList[i]['gameObject']['players']).length == 1){
             --gameCollection.totalGameCount;
             console.log("Destroyed room "+ gameCode);
             gameCollection.gameList.splice(i, 1); //remove that gameObject
@@ -134,7 +129,6 @@ io.on('connection', function (socket) {
           // Removing player from room if 2 or more people in room
           else{
             gameCollection.gameList[i]['gameObject']['players'].splice(usernameIndex,1)
-            gameCollection.gameList[i]['gameObject']['players'].push(null)
             console.log("Removed player: " + username + " from room " + gameCode)
             io.sockets.in(gameCode).emit('removedPlayer', {
               players: gameCollection.gameList[i]['gameObject']['players'],
@@ -199,7 +193,7 @@ io.on('connection', function (socket) {
           var usernameIndex = (gameCollection.gameList[i]['gameObject']['players']).indexOf(username);
           if (usernameIndex != -1){
             // Destroy entire room if there is only 1 person in the room
-            if (usernameIndex == 0 && (gameCollection.gameList[i]['gameObject']['players']).indexOf(null) == 1){
+            if (usernameIndex == 0 && (gameCollection.gameList[i]['gameObject']['players']).length == 1){
               --gameCollection.totalGameCount;
               console.log("Destroyed room "+ gameCode);
               gameCollection.gameList.splice(i, 1); //remove that gameObject
@@ -209,7 +203,6 @@ io.on('connection', function (socket) {
             // Removing player from room if 2 or more people in room
             else{
               gameCollection.gameList[i]['gameObject']['players'].splice(usernameIndex,1)
-              gameCollection.gameList[i]['gameObject']['players'].push(null)
               console.log("Removed player: " + username + " from room " + gameCode)
               io.sockets.in(gameCode).emit('removedPlayer', {
                 players: gameCollection.gameList[i]['gameObject']['players'],

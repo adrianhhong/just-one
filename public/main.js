@@ -107,23 +107,22 @@ function refreshPlayers(data) {
     // Display the access code
     $('#accesscodeDisplay').html(data.gameId);
 
-    for (var i=0; i<8; i++){
-        if (data.players[i] != null){
-            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
-            playerDisplay.innerHTML = data.players[i];
-            if (data.players[i] == username){
-                playerDisplay.style.color = '#FF0000' 
-            }
-            else{
-                playerDisplay.style.color = '#000000'
-            }
+    $('.list-group').empty();
+
+    for (var i=0; i<data.players.length; i++){
+        if (username == data.players[i]){
+            //Include current-player class
+            $('.list-group').append($('<li>').attr('class', 'list-group-item current-player').append(data.players[i]));
         }
-        if (data.players[i] == null){
-            var playerDisplay = document.getElementById('player'+(i+1)+'Display');
-            playerDisplay.innerHTML = '';
-        }            
+        else{
+            //dont include the class
+            $('.list-group').append($('<li>').attr('class', 'list-group-item').append(data.players[i]));
+        }
+
     }
+
 }
+
 
 /* *************************
    *      SOCKET.IO LOGIC       *
@@ -141,9 +140,7 @@ socket.on('gameCreated', function (data) {
     $('#accesscodeDisplay').html(data.gameId);
 
     // Display player 1
-    $('#player1Display').html(data.username);
-    $('#player1Display').css('color', '#FF0000');
-
+    $('.list-group').append($('<li>').attr('class', 'list-group-item current-player').append(data.username));
 });
 
 socket.on('gameJoined', function (data) {
