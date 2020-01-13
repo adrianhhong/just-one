@@ -152,18 +152,28 @@ io.on('connection', function (socket) {
         
 
   socket.on('startGame', function (username, gameCode) {
-    var randomWord = words.wordPool[Math.floor(Math.random()*words.wordPool.length)];
-    i=0;
-    console.log(gameCollection.gameList[i]['gameObject']['players']);
+  function shuffle(array, arrayLength) {
+    var copy = [], n = array.length, i;
+    // while(n)
+    // Only get arrayLength words
+    for (j=0; j<arrayLength; j++) {
+      // Pick a remaining element…
+      i = Math.floor(Math.random() * n--);
+      // And move it to the new array.
+      copy.push(array.splice(i, 1)[0]);
+    }
+    return copy;
+  }
+
+  // Get 13 random words
+  var randomWords = shuffle(words.wordPool, 13);
 
     // Randomise the roles, send the roles to all users.
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
-        //Assign the master
-          /* *************************
-   *      I HAVENT FINISHED THIS YET*
-   ************************* */
+        var shufflePlayers = shuffle(gameCollection.gameList[i]['gameObject']['players'], gameCollection.gameList[i]['gameObject']['players'].length)
+        console.log(shufflePlayers)
       }
     }
     
