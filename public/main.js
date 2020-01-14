@@ -108,7 +108,10 @@ function onAccessCodeDisplayClick() {
     $temp.val(gameCode).select();
     document.execCommand("copy");
     $temp.remove();
-}
+
+    // Visual prompt
+    $('.material-icons').html("done");
+};
 
 // Submit a clue
 function onSubmitClueClick(guesserUsername) {
@@ -134,11 +137,11 @@ function refreshPlayers(data) {
     for (var i=0; i<data.players.length; i++){
         if (username == data.players[i]){
             //Include current-player class
-            $('.list-group').append($('<li>').attr('class', 'list-group-item current-player').append(data.players[i]));
+            $('.list-group').append($('<li>').attr('class', 'list-group-item current-player d-flex justify-content-between align-items-center').append(data.players[i]).append('<span class="badge badge-dark badge-pill">You</span>'));
         }
         else{
             //dont include the class
-            $('.list-group').append($('<li>').attr('class', 'list-group-item').append(data.players[i]));
+            $('.list-group').append($('<li>').attr('class', 'list-group-item d-flex justify-content-between align-items-center').append(data.players[i]));
         }
     }
 
@@ -161,7 +164,7 @@ socket.on('gameCreated', function (data) {
     $('#accesscodeDisplay').html(data.gameId);
 
     // Display player 1
-    $('.list-group').append($('<li>').attr('class', 'list-group-item current-player').append(data.username));
+    $('.list-group').append($('<li>').attr('class', 'list-group-item current-player d-flex justify-content-between align-items-center').append(data.username).append('<span class="badge badge-dark badge-pill">You</span>'));
 });
 
 socket.on('gameJoined', function (data) {
