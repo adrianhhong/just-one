@@ -22,6 +22,8 @@ $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
 $doc.on('click', '.copyCode', onAccessCodeDisplayClick);
 
+
+
 // Client's details
 var username;
 var gameCode;
@@ -38,12 +40,28 @@ $pageArea.html($homePage);
    ************************* */
 // New Game Button
 function onNewGameClick() {
+    // Allow you to press enter on input
     $pageArea.html($createPage);
+    $('.usernameInput').keyup(function (e) {
+        if (e.keyCode === 13) {
+           onCreateGameClick();
+        }
+    });
 }
 
 // Join Game Button
 function onJoinGameClick() {
     $pageArea.html($joinPage);
+    $('.usernameJoinInput').keyup(function (e) {
+        if (e.keyCode === 13) {
+           onJoinLobbyClick();
+        }
+    });
+    $('.accesscodeInput').keyup(function (e) {
+        if (e.keyCode === 13) {
+           onJoinLobbyClick();
+        }
+    });
 }
 
 // Create Game Button
@@ -73,7 +91,6 @@ function onLeaveGameClick() {
 
 // Join Lobby Button
 function onJoinLobbyClick() {
-
     usernameJoin = $('.usernameJoinInput').val();
     accesscodeJoin = $('.accesscodeInput').val();
     username = usernameJoin;
