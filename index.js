@@ -33,6 +33,28 @@ var gameCollection =  new function() {
 var allClients = {};
 
 
+/* *************************
+   *      OTHER FUNCTIONS       *
+   ************************* */
+
+// Get an 'arrayLength' length array that has random items from 'array' with no duplicates
+function shuffle(array, arrayLength) {
+  var copy = [], n = array.length, i;
+  // while(n)
+  // Only get arrayLength words
+  for (j=0; j<arrayLength; j++) {
+    // Pick a remaining element…
+    i = Math.floor(Math.random() * n--);
+    // And move it to the new array.
+    copy.push(array.splice(i, 1)[0]);
+  }
+  return copy;
+}
+
+// Get a key from a value (this is used specifically for getting the playername from allClients since object[key][1] (LOOK AT THE 1))
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key][1] === value);
+}
 
 
 
@@ -59,8 +81,13 @@ io.on('connection', function (socket) {
       }
     }
 
+    // Get 13 random words
+    var randomWords = shuffle(words.wordPool, 13);
+
     gameObject.id = newRoom;
     gameObject.players = [username];
+    gameObject.words = [randomWords];
+    
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
 
@@ -84,7 +111,7 @@ io.on('connection', function (socket) {
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
       if (gameIdTmp == accesscodeJoin){
-        if (gameCollection.gameList[i]['gameObject']['players'].length < 8){
+        if (gameCollection.gameList[i]['gameObject']['players'].length < 7){
           gameCollection.gameList[i]['gameObject']['players'].push(usernameJoin)
           socket.join(gameCollection.gameList[i]['gameObject']['id']);
           io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {
@@ -146,36 +173,13 @@ io.on('connection', function (socket) {
         
 
   socket.on('startGame', function (username, gameCode) {
-  function shuffle(array, arrayLength) {
-    var copy = [], n = array.length, i;
-    // while(n)
-    // Only get arrayLength words
-    for (j=0; j<arrayLength; j++) {
-      // Pick a remaining element…
-      i = Math.floor(Math.random() * n--);
-      // And move it to the new array.
-      copy.push(array.splice(i, 1)[0]);
-    }
-    return copy;
-  }
-
-  // Get 13 random words
-  var randomWords = shuffle(words.wordPool, 13);
-
-    // Randomise the roles, send the roles to all users.
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
-        var shufflePlayers = shuffle(gameCollection.gameList[i]['gameObject']['players'], gameCollection.gameList[i]['gameObject']['players'].length)
-        console.log(shufflePlayers)
+        firstplayerSocket = getKeyByValue(allClients, gameCollection.gameList[i]['gameObject']['players'][0])
+        io.to(firstplayerSocket).emit('allocateGuesser', {username, gameCode});
       }
     }
-    
-
-    // io.sockets.in(gameObject.id).emit('gameCreated', {
-    //   username: username,
-    //   gameId: gameObject.id
-    // });
   });
 
 

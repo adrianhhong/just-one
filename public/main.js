@@ -1,9 +1,6 @@
 //// Initialise variables /////
 var $doc = $(document);
 var $window = $(window);
-var $usernameInput = $('.usernameInput'); // Input for username
-var $messages = $('.messages'); // Messages area
-var $inputMessage = $('.inputMessage'); // Input message input box
 
 // Pages
 var $pageArea = $('.page-area'); // The home page
@@ -11,7 +8,9 @@ var $homePage = $('.home-page').html(); // The home page
 var $createPage = $('.create-page').html(); // The create game page
 var $joinPage = $('.join-page').html(); // The join game page
 var $lobbyPage = $('.lobby-page').html(); // The game lobby page
+var $guesserwaitPage = $('.guesser-wait-page').html(); // The waiting room for the guesser. Waiting for everyone to choose a clue.
 var $gamePage = $('.game-page').html(); // The main game page
+
 
 // Buttons
 $doc.on('click', '.newGame', onNewGameClick);
@@ -62,10 +61,6 @@ function onBackToHomeClick() {
 // Start Game Button
 function onStartGameClick() {
     socket.emit('startGame', username, gameCode); 
-
-    $pageArea.html($gamePage);
-
-
 }
 
 // Leave Lobby Button
@@ -170,4 +165,8 @@ socket.on('gameDestroyed', function(){
     //reset username and gamecode
     username = null;
     gameCode = null;
+})
+
+socket.on('allocateGuesser', function(){
+    $pageArea.html($guesserwaitPage);
 })
