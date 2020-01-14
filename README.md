@@ -1,4 +1,4 @@
-# Only One Board Game
+# Just One Board Game
 
 To do:
 - When waiting, show a list of who has submitted clues and who we are still waiting on (for both guesser and others)

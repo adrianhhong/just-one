@@ -11,6 +11,7 @@ var $lobbyPage = $('.lobby-page').html(); // The game lobby page
 var $guesserwaitPage = $('.guesser-wait-page').html(); // The waiting room for the guesser. Waiting for everyone to choose a clue.
 var $otherscluePage = $('.others-clue-page').html(); // Page for others to give clues
 var $otherswaitPage = $('.others-wait-page').html(); // Page for others to wait for the other others to finish writing their clues
+var $othersremovecluesPage = $('.others-remove-clues-page').html(); // Page to remove invalid and duplicate clues
 var $gamePage = $('.game-page').html(); // The main game page
 
 
@@ -23,7 +24,6 @@ $doc.on('click', '.startGame', onStartGameClick);
 $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
 $doc.on('click', '.copyCode', onAccessCodeDisplayClick);
-$doc.on('click', '.submitClue', onSubmitClueClick);
 
 
 
@@ -111,9 +111,9 @@ function onAccessCodeDisplayClick() {
 }
 
 // Submit a clue
-function onSubmitClueClick() {
-    clue = $('.submitClue').val();
-    socket.emit('clueSubmission', username, gameCode, clue);
+function onSubmitClueClick(guesserUsername) {
+    clue = $('.clueInput').val();
+    socket.emit('clueSubmission', guesserUsername, username, gameCode, clue);
     $pageArea.html($otherswaitPage);
 }
 
@@ -140,7 +140,6 @@ function refreshPlayers(data) {
             //dont include the class
             $('.list-group').append($('<li>').attr('class', 'list-group-item').append(data.players[i]));
         }
-
     }
 
 }
@@ -194,6 +193,10 @@ socket.on('gameDestroyed', function(){
     gameCode = null;
 })
 
+socket.on('needMorePlayers', function () {
+    $('#morePlayers').html("You need at least 3 players to start."); 
+});
+
 socket.on('allocateGuesser', function(guesserUsername, gameCode){
     $pageArea.html($guesserwaitPage);
     socket.emit('guesserResponse', guesserUsername, gameCode); 
@@ -205,8 +208,19 @@ socket.on('allocateOthers', function(guesserUsername, gameCode, currentWord){
     $('#guesserDisplay').html(guesserUsername);
     $('.clueInput').keyup(function (e) {
         if (e.keyCode === 13) {
-           onSubmitClueClick();
+           onSubmitClueClick(guesserUsername);
         }
     });
 
+})
+
+socket.on('allFinishedClueSubmission', function(guesserUsername, gameCode, clues){
+    console.log(clues)
+    if(guesserUsername != username){
+        $pageArea.html($othersremovecluesPage);
+        // Print out each clue, start at 1 since the guesser is 0.
+        for (var i=1; i<clues.length; i++){
+            $('.list-group').append($('<li>').attr('class', 'list-group-item').append(clues[i]));
+        }
+    }
 })
