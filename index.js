@@ -182,15 +182,15 @@ io.on('connection', function (socket) {
         // Preallocate the clues with nulls depending on no. of players
         amountOfPlayers = gameCollection.gameList[i]['gameObject']['players'].length;
 
-        if (amountOfPlayers >= 3){
+        //if (amountOfPlayers >= 3){ // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
           gameCollection.gameList[i]['gameObject']['clues'] = new Array(amountOfPlayers).fill(null);
           // Submit a socket to the first guesser
           firstplayerSocket = getKeyByValue(allClients, gameCollection.gameList[i]['gameObject']['players'][0])
           io.to(firstplayerSocket).emit('allocateGuesser', gameCollection.gameList[i]['gameObject']['players'][0], gameCode);
-        }
-        else {
+        //} // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
+        //else { // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
           socket.emit('needMorePlayers')
-        }
+        //} // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
       }
     }
   });
