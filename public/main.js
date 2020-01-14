@@ -9,6 +9,8 @@ var $createPage = $('.create-page').html(); // The create game page
 var $joinPage = $('.join-page').html(); // The join game page
 var $lobbyPage = $('.lobby-page').html(); // The game lobby page
 var $guesserwaitPage = $('.guesser-wait-page').html(); // The waiting room for the guesser. Waiting for everyone to choose a clue.
+var $otherscluePage = $('.others-clue-page').html(); // Page for others to give clues
+var $otherswaitPage = $('.others-wait-page').html(); // Page for others to wait for the other others to finish writing their clues
 var $gamePage = $('.game-page').html(); // The main game page
 
 
@@ -21,6 +23,7 @@ $doc.on('click', '.startGame', onStartGameClick);
 $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
 $doc.on('click', '.copyCode', onAccessCodeDisplayClick);
+$doc.on('click', '.submitClue', onSubmitClueClick);
 
 
 
@@ -78,7 +81,7 @@ function onBackToHomeClick() {
 
 // Start Game Button
 function onStartGameClick() {
-    socket.emit('startGame', username, gameCode); 
+    socket.emit('startGame', gameCode); 
 }
 
 // Leave Lobby Button
@@ -105,6 +108,13 @@ function onAccessCodeDisplayClick() {
     $temp.val(gameCode).select();
     document.execCommand("copy");
     $temp.remove();
+}
+
+// Submit a clue
+function onSubmitClueClick() {
+    clue = $('.submitClue').val();
+    socket.emit('clueSubmission', username, gameCode, clue);
+    $pageArea.html($otherswaitPage);
 }
 
 
@@ -184,6 +194,19 @@ socket.on('gameDestroyed', function(){
     gameCode = null;
 })
 
-socket.on('allocateGuesser', function(){
+socket.on('allocateGuesser', function(guesserUsername, gameCode){
     $pageArea.html($guesserwaitPage);
+    socket.emit('guesserResponse', guesserUsername, gameCode); 
+})
+
+socket.on('allocateOthers', function(guesserUsername, gameCode, currentWord){
+    $pageArea.html($otherscluePage);
+    $('#wordDisplay').html(currentWord);
+    $('#guesserDisplay').html(guesserUsername);
+    $('.clueInput').keyup(function (e) {
+        if (e.keyCode === 13) {
+           onSubmitClueClick();
+        }
+    });
+
 })

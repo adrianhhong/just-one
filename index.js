@@ -86,7 +86,10 @@ io.on('connection', function (socket) {
 
     gameObject.id = newRoom;
     gameObject.players = [username];
-    gameObject.words = [randomWords];
+    gameObject.words = randomWords;
+    gameObject.clues = null;
+    gameObject.currentWordIndex = 0;
+    gameObject.noOfCluesSubmitted = 0;
     
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
@@ -172,16 +175,47 @@ io.on('connection', function (socket) {
   });
         
 
-  socket.on('startGame', function (username, gameCode) {
+  socket.on('startGame', function (gameCode) {
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
+        // Preallocate the clues with nulls depending on no. of players
+        amountOfPlayers = gameCollection.gameList[i]['gameObject']['players'].length;
+        gameCollection.gameList[i]['gameObject']['clues'] = new Array(amountOfPlayers).fill(null)
+        // Submit a socket to the first guesser
         firstplayerSocket = getKeyByValue(allClients, gameCollection.gameList[i]['gameObject']['players'][0])
-        io.to(firstplayerSocket).emit('allocateGuesser', {username, gameCode});
+        io.to(firstplayerSocket).emit('allocateGuesser', gameCollection.gameList[i]['gameObject']['players'][0], gameCode);
       }
     }
   });
 
+  socket.on('guesserResponse', function (guesserUsername, gameCode) {
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        wordIndex = gameCollection.gameList[i]['gameObject']['currentWordIndex'];
+        socket.to(gameCode).emit('allocateOthers', guesserUsername, gameCode, gameCollection.gameList[i]['gameObject']['words'][wordIndex]);
+      }
+    }
+  });
+
+  socket.on('clueSubmission', function (username, gameCode, clue) {
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        var usernameIndex = gameCollection.gameList[i]['gameObject']['players'].indexOf(username);
+        gameCollection.gameList[i]['gameObject']['clues'][usernameIndex] = clue;
+        gameCollection.gameList[i]['gameObject']['clues']['noOfCluesSubmitted']++;
+        if(gameCollection.gameList[i]['gameObject']['clues']['noOfCluesSubmitted'] < gameCollection.gameList[i]['gameObject']['players'].length){
+          //Update the waiting on list
+        }
+        else{
+          // Go to the remove words page
+        }
+
+      }
+    }
+  });
 
   // If a user disconnects.
   socket.on('disconnect', function () {
