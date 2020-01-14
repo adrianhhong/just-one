@@ -219,8 +219,23 @@ socket.on('allFinishedClueSubmission', function(guesserUsername, gameCode, clues
     if(guesserUsername != username){
         $pageArea.html($othersremovecluesPage);
         // Print out each clue, start at 1 since the guesser is 0.
-        for (var i=1; i<clues.length; i++){
-            $('.list-group').append($('<li>').attr('class', 'list-group-item').append(clues[i]));
+        // for (var i=1; i<clues.length; i++){
+        //     $('.list-group').append($('<li>').attr('class', 'list-group-item').append(clues[i]));
+        // }
+
+        // Print out each clue, start at 1 since the guesser is 0.
+        for (var i=1; i<clues.length; i++) {
+            $('.form-check').append($('<input>').attr('class', 'form-check-input').attr('type', 'checkbox').attr('id', 'check'+i));
+            $('.form-check').append($('<br>'));
+            $('.form-check').append($('<label>').attr('class', 'form-check-label').attr('for', 'check'+i).append(clues[i]));
         }
+
+
+
+
+        // <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+        // <label class="form-check-label" for="defaultCheck1">
+        //   Default checkbox
+        // </label>
     }
 })
