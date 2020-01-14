@@ -48,11 +48,10 @@ ul.list-group {
   padding-bottom: 1em;
 }
 
-.current-player{
+.list-group-item{
   color: black;
 }
 
-  
 #canvas {
   border: 2px solid white;
 }
@@ -64,4 +63,8 @@ li {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.material-icons {
+  font-size: 16px !important;
 }
