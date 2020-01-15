@@ -90,6 +90,7 @@ io.on('connection', function (socket) {
     gameObject.clues = null;
     gameObject.currentWordIndex = 0;
     gameObject.noOfCluesSubmitted = 0;
+    gameObject.currentGuesserIndex = 0;
     
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
@@ -114,14 +115,26 @@ io.on('connection', function (socket) {
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
       if (gameIdTmp == accesscodeJoin){
+        // Check if there are already 7 players
+        var nameisalreadytaken = false;
         if (gameCollection.gameList[i]['gameObject']['players'].length < 7){
-          gameCollection.gameList[i]['gameObject']['players'].push(usernameJoin)
-          socket.join(gameCollection.gameList[i]['gameObject']['id']);
-          io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {
-            players: gameCollection.gameList[i]['gameObject']['players'],
-            gameId: gameCollection.gameList[i]['gameObject']['id']
-          });
-          allClients[socket.id] = [accesscodeJoin, usernameJoin] // Adding a client
+          // Checking if the name is taken already
+          for (var j = 0; j < gameCollection.gameList[i]['gameObject']['players'].length; j++){
+            if (gameCollection.gameList[i]['gameObject']['players'][j] == usernameJoin){
+              socket.emit('nameTaken');
+              nameisalreadytaken = true;
+            }
+          }
+          if(nameisalreadytaken == false){
+            //Add the new player
+            gameCollection.gameList[i]['gameObject']['players'].push(usernameJoin);
+            socket.join(gameCollection.gameList[i]['gameObject']['id']);
+            io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {
+              players: gameCollection.gameList[i]['gameObject']['players'],
+              gameId: gameCollection.gameList[i]['gameObject']['id']
+            });
+            allClients[socket.id] = [accesscodeJoin, usernameJoin] // Adding a client
+          }
         }
         else{
           socket.emit('noPlayerSlotsAvailable')
@@ -185,11 +198,12 @@ io.on('connection', function (socket) {
         //if (amountOfPlayers >= 3){ // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
           gameCollection.gameList[i]['gameObject']['clues'] = new Array(amountOfPlayers).fill(null);
           // Submit a socket to the first guesser
-          firstplayerSocket = getKeyByValue(allClients, gameCollection.gameList[i]['gameObject']['players'][0])
-          io.to(firstplayerSocket).emit('allocateGuesser', gameCollection.gameList[i]['gameObject']['players'][0], gameCode);
+          currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
+          guesserSocket = getKeyByValue(allClients, currentGuesser)
+          io.to(guesserSocket).emit('allocateGuesser', currentGuesser, gameCode);
         //} // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
         //else { // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
-          socket.emit('needMorePlayers')
+          // socket.emit('needMorePlayers') // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
         //} // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
       }
     }
@@ -222,6 +236,23 @@ io.on('connection', function (socket) {
           var allClues = gameCollection.gameList[i]['gameObject']['clues'];
           io.sockets.in(gameCode).emit('allFinishedClueSubmission', guesserUsername, gameCode, allClues);
         }
+      }
+    }
+  });
+
+
+  socket.on('checkboxClicked', function(gameCode, checkid, isChecked){
+    socket.to(gameCode).emit('checkboxChange', checkid, isChecked);
+  });
+
+  socket.on('allValidClues', function(allValidClues, gameCode){
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        // Submit a socket to the first guesser
+        // playerSocket = getKeyByValue(allClients, gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]);
+        // io.to(playerSocket).emit('guesserValidWords', allValidClues, gameCode);
+        // //Change Guesser first and then change all others
       }
     }
   });

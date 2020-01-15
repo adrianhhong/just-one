@@ -2,6 +2,14 @@
 var $doc = $(document);
 var $window = $(window);
 
+// Client's details
+var username;
+var gameCode;
+var allClues;
+
+// Initial Socket connection
+var socket = io();
+
 // Pages
 var $pageArea = $('.page-area'); // The home page
 var $homePage = $('.home-page').html(); // The home page
@@ -24,18 +32,50 @@ $doc.on('click', '.startGame', onStartGameClick);
 $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
 $doc.on('click', '.copyCode', onAccessCodeDisplayClick);
+$doc.on('click', '.validClues', onValidCluesClick);
+
+// Checkboxes
+$doc.on('change', '#check1', function() {
+    var isChecked = $('#check1').prop('checked');
+    socket.emit('checkboxClicked', gameCode, 'check1', isChecked); 
+});
+
+$doc.on('change', '#check2', function() {
+    var isChecked = $('#check2').prop('checked');
+    socket.emit('checkboxClicked', gameCode, 'check2', isChecked); 
+});
+
+$doc.on('change', '#check3', function() {
+    var isChecked = $('#check3').prop('checked');
+    socket.emit('checkboxClicked', gameCode, 'check3', isChecked); 
+});
+
+$doc.on('change', '#check4', function() {
+    var isChecked = $('#check4').prop('checked');
+    socket.emit('checkboxClicked', gameCode, 'check4', isChecked); 
+});
+
+$doc.on('change', '#check5', function() {
+    var isChecked = $('#check5').prop('checked');
+    socket.emit('checkboxClicked', gameCode, 'check5', isChecked); 
+});
+
+$doc.on('change', '#check6', function() {
+    var isChecked = $('#check6').prop('checked');
+    socket.emit('checkboxClicked', gameCode, 'check6', isChecked); 
+});
+
+$doc.on('change', '#check7', function() {
+    var isChecked = $('#check7').prop('checked');
+    socket.emit('checkboxClicked', gameCode, 'check7', isChecked); 
+});
 
 
 
-// Client's details
-var username;
-var gameCode;
-
-// Initial Socket connection
-var socket = io();
 
 // Show Home Page initially
 $pageArea.html($homePage);
+
 
 
 /* *************************
@@ -88,7 +128,6 @@ function onStartGameClick() {
 function onLeaveGameClick() {
     //Need to remove the username, and then check if there is anyone in the lobby, if no one, then remove the game, if people, then remove player and readjust order of players
     socket.emit('leaveLobby', username, gameCode);
-
     $pageArea.html($homePage);
 }
 
@@ -120,6 +159,17 @@ function onSubmitClueClick(guesserUsername) {
     $pageArea.html($otherswaitPage);
 }
 
+// Finished accessing all clues
+function onValidCluesClick() {
+    var allValidClues = [];
+    for (i=1; i<allClues.length; i++){
+        if(! $('#check'+i).prop('checked')){
+            allValidClues[i-1] = allClues[i];
+        }
+    }
+    socket.emit('allValidClues', allValidClues, gameCode);
+}
+
 
 /* *************************
    *      OTHER FUNCTIONS       *
@@ -127,6 +177,8 @@ function onSubmitClueClick(guesserUsername) {
 
 // Refresh the lobby page to show updated players
 function refreshPlayers(data) {
+    $pageArea.html($lobbyPage);
+    
     gameCode = data.gameId;
 
     // Display the access code
@@ -175,8 +227,15 @@ socket.on('gameJoined', function (data) {
 
 
 socket.on('removedPlayer', function (data) {
+    // Make an alert that says someone has disconnected? All disconnects lead back to the lobby page
     refreshPlayers(data);
 });
+
+
+socket.on('nameTaken', function(){
+    $('#nameTaken').html("Sorry, that name has been taken.");
+        //Need to remove after like 5 sec. and fade out
+})
 
 
 socket.on('cantFindGametoJoin', function(){
@@ -218,27 +277,19 @@ socket.on('allocateOthers', function(guesserUsername, gameCode, currentWord){
 })
 
 socket.on('allFinishedClueSubmission', function(guesserUsername, gameCode, clues){
-    console.log(clues)
+    allClues = clues;
+
     if(guesserUsername != username){
         $pageArea.html($othersremovecluesPage);
         // Print out each clue, start at 1 since the guesser is 0.
-        // for (var i=1; i<clues.length; i++){
-        //     $('.list-group').append($('<li>').attr('class', 'list-group-item').append(clues[i]));
-        // }
-
-        // Print out each clue, start at 1 since the guesser is 0.
         for (var i=1; i<clues.length; i++) {
-            $('.form-check').append($('<input>').attr('class', 'form-check-input').attr('type', 'checkbox').attr('id', 'check'+i));
-            $('.form-check').append($('<br>'));
-            $('.form-check').append($('<label>').attr('class', 'form-check-label').attr('for', 'check'+i).append(clues[i]));
+            $('#form-check'+i).append($('<input>').attr('class', 'form-check-input').attr('type', 'checkbox').attr('id', 'check'+i));
+            $('#form-check'+i).append($('<label>').attr('class', 'form-check-label').attr('for', 'check'+i).append(clues[i]));
         }
-
-
-
-
-        // <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-        // <label class="form-check-label" for="defaultCheck1">
-        //   Default checkbox
-        // </label>
     }
 })
+
+// When one user clicks a checkbox, all users need their checkbox clicked
+socket.on('checkboxChange', function(checkid, isChecked){
+    $('#'+checkid).prop('checked', isChecked);
+});
