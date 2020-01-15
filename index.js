@@ -92,6 +92,7 @@ io.on('connection', function (socket) {
     gameObject.noOfCluesSubmitted = 0;
     gameObject.currentGuesserIndex = 0;
     gameObject.score = 0;
+    gameObject.guess = "";
     
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
@@ -263,41 +264,48 @@ io.on('connection', function (socket) {
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
-        if(guessersGuess == gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])]){
+        var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
+        var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
+        gameCollection.gameList[i]['gameObject']['guess'] = guessersGuess;
+        if(guessersGuess == actualWord){
           gameCollection.gameList[i]['gameObject']['score']++;
-          var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
-          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, gameCollection.gameList[i]['gameObject']['words'][wordIndex], 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
         }
         else{
-          currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
-          io.sockets.in(gameCode).emit('wasGuessCorrect', currentGuesser, guessersGuess, gameCode);
-          // Guessers page. You guessed THISWORD
-          // Everyone elses page. GUesser guessed THISWORD. The word was this. Was this correct?
+          io.sockets.in(gameCode).emit('verifyGuess', guesserUsername, guessersGuess, actualWord, gameCode);
         }
       }
     }
   });
-
+  
   socket.on('skipWord', function(gameCode){
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
         var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
-        io.sockets.in(gameCode).emit('endScreen', guesserUsername, "", gameCollection.gameList[i]['gameObject']['words'][wordIndex], 2, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+        var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
+        io.sockets.in(gameCode).emit('endScreen', guesserUsername, "", actualWord, 2, gameCollection.gameList[i]['gameObject']['score'], gameCode);
       }
     }
   });
 
-  socket.on('correct', function(gameCode){
-    gameCollection.gameList[i]['gameObject']['score']++;
-    var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
-    io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, gameCollection.gameList[i]['gameObject']['words'][wordIndex], 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+  socket.on('isCorrect', function(isCorrect, gameCode){
+      for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
+        var guessersGuess = gameCollection.gameList[i]['gameObject']['guess'];
+        var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
+        if (isCorrect){
+          gameCollection.gameList[i]['gameObject']['score']++;
+          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+        } else{
+          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 0, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+        }
+      }
+    }
   });
 
-  socket.on('incorrect', function(gameCode){
-    var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
-    io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, gameCollection.gameList[i]['gameObject']['words'][wordIndex], 0, gameCollection.gameList[i]['gameObject']['score'], gameCode);
-  })
 
   // If a user disconnects.
   socket.on('disconnect', function () {
@@ -332,6 +340,7 @@ io.on('connection', function (socket) {
               gameCollection.gameList[i]['gameObject']['noOfCluesSubmitted'] = 0;
               gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 0;
               gameCollection.gameList[i]['gameObject']['score'] = 0;
+              gameCollection.gameList[i]['gameObject']['guess'] = "";
               
               console.log("Removed player: " + username + " from room " + gameCode)
               io.sockets.in(gameCode).emit('removedPlayer', {

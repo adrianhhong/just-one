@@ -192,11 +192,11 @@ function onSkipWordClick(){
 }
 
 function onCorrectClick(){
-    socket.emit('correct', gameCode);
+    socket.emit('isCorrect', 1, gameCode);
 }
 
 function onIncorrectClick(){
-    socket.emit('incorrect', gameCode);
+    socket.emit('isCorrect', 0, gameCode);
 }
 
 /* *************************
@@ -339,12 +339,15 @@ socket.on('guesserValidClues', function(guesserUsername, gameCode, allValidClues
     }
 });
 
-socket.on('wasGuessCorrect', function(currentGuesser, guessersGuess, gameCode){
-    if(currentGuesser == username){
+socket.on('verifyGuess', function(guesserUsername, guessersGuess, actualWord, gameCode){
+    if(guesserUsername == username){
         $pageArea.html($guesserwaitforverificationPage);
     } else{
         $pageArea.html($verificationPage);
-        // Change all the variables in css 
+        // Change all the variables in css
+        $('#guesserName').html(guesserUsername);
+        $('#guessedWord').html(guessersGuess);
+        $('#actualWord').html(actualWord);
     }
 });
 
