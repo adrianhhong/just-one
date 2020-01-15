@@ -34,11 +34,17 @@ hr {
   /* width: 300px; */
 }
 
-.btn {
+/* .btn {
   width: 120px !important;
-}
+} */
 
 .players-container {
+  margin: 0 auto;
+  justify-content: center;
+  width: 70%;
+}
+
+.clues-container {
   margin: 0 auto;
   justify-content: center;
   width: 70%;

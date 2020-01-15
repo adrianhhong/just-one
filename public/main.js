@@ -20,8 +20,8 @@ var $guesserwaitPage = $('.guesser-wait-page').html(); // The waiting room for t
 var $otherscluePage = $('.others-clue-page').html(); // Page for others to give clues
 var $otherswaitPage = $('.others-wait-page').html(); // Page for others to wait for the other others to finish writing their clues
 var $othersremovecluesPage = $('.others-remove-clues-page').html(); // Page to remove invalid and duplicate clues
-var $gamePage = $('.game-page').html(); // The main game page
-
+var $guesserguessPage = $('.guesser-guess-page').html(); // The guesser guess word from clues page
+var $otherswaitforguessPage = $('.guesser-wait-for-guess-page').html(); // The guesser guess word from clues page
 
 // Buttons
 $doc.on('click', '.newGame', onNewGameClick);
@@ -33,6 +33,8 @@ $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
 $doc.on('click', '.copyCode', onAccessCodeDisplayClick);
 $doc.on('click', '.validClues', onValidCluesClick);
+$doc.on('click', '.guessWord', onGuessWordClick);
+$doc.on('click', '.skipWord', onSkipWordClick);
 
 // Checkboxes
 $doc.on('change', '#check1', function() {
@@ -162,14 +164,25 @@ function onSubmitClueClick(guesserUsername) {
 // Finished accessing all clues
 function onValidCluesClick() {
     var allValidClues = [];
+    var j=0;
     for (i=1; i<allClues.length; i++){
         if(! $('#check'+i).prop('checked')){
-            allValidClues[i-1] = allClues[i];
+            allValidClues[j] = allClues[i];
+            j++;
         }
     }
     socket.emit('allValidClues', allValidClues, gameCode);
 }
 
+
+function onGuessWordClick(){
+    guessersGuess = $('.guessersGuessInput').val().trim();
+    socket.emit('guessersGuess', guessersGuess, gameCode);    
+}
+
+function onSkipWordClick(){
+
+}
 
 /* *************************
    *      OTHER FUNCTIONS       *
@@ -287,9 +300,26 @@ socket.on('allFinishedClueSubmission', function(guesserUsername, gameCode, clues
             $('#form-check'+i).append($('<label>').attr('class', 'form-check-label').attr('for', 'check'+i).append(clues[i]));
         }
     }
-})
+});
 
 // When one user clicks a checkbox, all users need their checkbox clicked
 socket.on('checkboxChange', function(checkid, isChecked){
     $('#'+checkid).prop('checked', isChecked);
+});
+
+
+socket.on('guesserValidClues', function(guesserUsername, gameCode, allValidClues){
+    if(guesserUsername == username){
+        $pageArea.html($guesserguessPage);
+        for(i=0; i<allValidClues.length; i++){
+            $('.list-group').append($('<li>').attr('class', 'list-group-item d-flex justify-content-between align-items-center').append(allValidClues[i]));
+        }
+        $('.guessersGuessInput').keyup(function (e) {
+            if (e.keyCode === 13) {
+               onGuessWordClick();
+            }
+        });
+    } else{
+        $pageArea.html($otherswaitforguessPage);
+    }
 });

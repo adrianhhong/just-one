@@ -246,13 +246,29 @@ io.on('connection', function (socket) {
   });
 
   socket.on('allValidClues', function(allValidClues, gameCode){
+    // console.log("allvalidclues: " + allValidClues)
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
-        // Submit a socket to the first guesser
-        // playerSocket = getKeyByValue(allClients, gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]);
-        // io.to(playerSocket).emit('guesserValidWords', allValidClues, gameCode);
-        // //Change Guesser first and then change all others
+        // Submit a socket to the  guesser
+        var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
+        var playerSocket = getKeyByValue(allClients, guesserUsername);
+        io.sockets.in(gameCode).emit('guesserValidClues', guesserUsername, gameCode, allValidClues);
+      }
+    }
+  });
+
+  socket.on('guessersGuess', function(guessersGuess, gameCode){
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        if(guessersGuess == gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])]){
+          //YOU GOT IT RIGHT!!!
+        }
+        else{
+          // Guessers page. You guessed THISWORD
+          // Everyone elses page. GUesser guessed THISWORD. The word was this. Was this correct?
+        }
       }
     }
   });
@@ -281,6 +297,15 @@ io.on('connection', function (socket) {
             // Removing player from room if 2 or more people in room
             else{
               gameCollection.gameList[i]['gameObject']['players'].splice(usernameIndex,1)
+              
+              // Reset all gameStats
+              var randomWords = shuffle(words.wordPool, 13);
+              gameCollection.gameList[i]['gameObject']['words'] = randomWords;
+              gameCollection.gameList[i]['gameObject']['currentWordIndex'] = 0;
+              gameCollection.gameList[i]['gameObject']['clues'] = null;
+              gameCollection.gameList[i]['gameObject']['noOfCluesSubmitted'] = 0;
+              gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 0;
+              
               console.log("Removed player: " + username + " from room " + gameCode)
               io.sockets.in(gameCode).emit('removedPlayer', {
                 players: gameCollection.gameList[i]['gameObject']['players'],

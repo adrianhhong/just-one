@@ -38,7 +38,7 @@
     <h1> Insider </h1>
     <hr>
     <br>
-    <input class="usernameInput form-control" type="text" maxlength="14" placeholder=" Enter your name"/>
+    <input class="usernameInput form-control" type="text" maxlength="14" placeholder="Enter your name"/>
     <br>
     <br>
     <div class="gameButtons">
@@ -52,8 +52,8 @@
     <hr>
     <br>
     <div class="row">
-      <input class="usernameJoinInput form-control col-sm mx-2 mb-1" type="text" maxlength="14" placeholder=" Enter your name"/>
-      <input class="accesscodeInput form-control col-sm mx-2" type="text" maxlength="4" placeholder=" Enter an access code"/>
+      <input class="usernameJoinInput form-control col-sm mx-2 mb-1" type="text" maxlength="14" placeholder="Enter your name"/>
+      <input class="accesscodeInput form-control col-sm mx-2" type="text" maxlength="4" placeholder="Enter an access code"/>
     </div>
     <br>
     <br>
@@ -134,21 +134,29 @@
     <div class="gameButtons">
       <button class="validClues btn btn-outline-light" placeholder="Submit Valid Clues">Submit Valid Clues</button>
     </div>
-
   </script>
 
-
-
-  <script class="game-page" type="text/template">
-    <h2> Timer </h2>
-    <h2> Word </h2>
-    <h4> Players </h4>
-    <div class="players-container">
+  <script class="guesser-guess-page" type="text/template">
+    <h6>Clues:</h6>
+    <div class="clues-container">
       <ul class="list-group">
       </ul>
     </div>
+    <p>Based on these clues, what is the word???</p>
+    <div class="row">
+      <input class="guessersGuessInput form-control col-sm mx-2 mb-1" type="text" placeholder="What is the word?"/>
+    </div>
+    <div class="gameButtons">
+      <button class="guessWord btn btn-outline-light" placeholder="Guess">Guess</button>
+      <button class="skipWord btn btn-outline-light" placeholder="Skip">Skip</button>
+    </div>
   </script>
 
+  <script class="guesser-wait-for-guess-page" type="text/template">
+    <h6>The guesser is guessing the word from your clues ... Will they get it right?</h6>
+  </script>
+
+ 
   
   <!-- Javascript Libraries -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
