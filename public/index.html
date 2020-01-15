@@ -152,11 +152,46 @@
     </div>
   </script>
 
-  <script class="guesser-wait-for-guess-page" type="text/template">
+  <script class="others-wait-for-guess-page" type="text/template">
     <h6>The guesser is guessing the word from your clues ... Will they get it right?</h6>
   </script>
 
- 
+  <script class="guesser-wait-for-verification-page" type="text/template">
+    <h6>The clue providers are checking if your word was correct...</h6>
+  </script>
+
+  <script class="verification-page" type="text/template">
+    <h2 id="guesserName"></h2>
+    <p>guessed the word was:</p>
+    <h2 id="guessedWord"></h2>
+    <p>The actual word was:</p>
+    <h2 id="actualWord"></h2>
+    <p>Were they correct?</p>
+    <div class="gameButtons">
+      <button class="correct btn btn-outline-light" placeholder="Correct">Correct</button>
+      <button class="incorrect btn btn-outline-light" placeholder="Incorrect">Incorrect</button>
+    </div>
+  </script>
+
+
+
+  <script class="end-page" type="text/template">
+    <h2 id="guesserName"></h2>
+    <p id="madeaguess">guessed the word was:</p>
+    <p id="skipped">skipped this word.</p>
+    <h2 id="guessedWord"></h2>
+    <p>The actual word was:</p>
+    <h2 id="actualWord"></h2>
+    <!-- maybe have a list of quotes when you get it right/wrong -->
+    <p id="right">You got it right!!!</p>
+    <p id="wrong">Unlucky m8, you were so close!!!</p>
+    <p>Current score:</p>
+    <h2 id="score"></h2>
+    <div class="gameButtons">
+      <button class="continue btn btn-outline-light" placeholder="Continue">Continue</button>
+      <button class="endGame btn btn-outline-light" placeholder="End Game">End Game</button>
+    </div>
+  </script>
   
   <!-- Javascript Libraries -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

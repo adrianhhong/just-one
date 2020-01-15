@@ -21,7 +21,12 @@ var $otherscluePage = $('.others-clue-page').html(); // Page for others to give 
 var $otherswaitPage = $('.others-wait-page').html(); // Page for others to wait for the other others to finish writing their clues
 var $othersremovecluesPage = $('.others-remove-clues-page').html(); // Page to remove invalid and duplicate clues
 var $guesserguessPage = $('.guesser-guess-page').html(); // The guesser guess word from clues page
-var $otherswaitforguessPage = $('.guesser-wait-for-guess-page').html(); // The guesser guess word from clues page
+var $otherswaitforguessPage = $('.others-wait-for-guess-page').html(); // The guesser guess word from clues page
+var $guesserwaitforverificationPage = $('.guesser-wait-for-verification-page').html(); // Wait for verification from others on whether guess was correct.
+var $verificationPage = $('.verification-page').html(); // Others verify if the word is correct
+var $endPage = $('.end-page').html(); // The guesser guess word from clues page
+
+
 
 // Buttons
 $doc.on('click', '.newGame', onNewGameClick);
@@ -35,6 +40,8 @@ $doc.on('click', '.copyCode', onAccessCodeDisplayClick);
 $doc.on('click', '.validClues', onValidCluesClick);
 $doc.on('click', '.guessWord', onGuessWordClick);
 $doc.on('click', '.skipWord', onSkipWordClick);
+$doc.on('click', '.correct', onCorrectClick);
+$doc.on('click', '.incorrect', onIncorrectClick);
 
 // Checkboxes
 $doc.on('change', '#check1', function() {
@@ -181,7 +188,15 @@ function onGuessWordClick(){
 }
 
 function onSkipWordClick(){
+    socket.emit('skipWord', gameCode)
+}
 
+function onCorrectClick(){
+    socket.emit('correct', gameCode);
+}
+
+function onIncorrectClick(){
+    socket.emit('incorrect', gameCode);
 }
 
 /* *************************
@@ -323,3 +338,33 @@ socket.on('guesserValidClues', function(guesserUsername, gameCode, allValidClues
         $pageArea.html($otherswaitforguessPage);
     }
 });
+
+socket.on('wasGuessCorrect', function(currentGuesser, guessersGuess, gameCode){
+    if(currentGuesser == username){
+        $pageArea.html($guesserwaitforverificationPage);
+    } else{
+        $pageArea.html($verificationPage);
+        // Change all the variables in css 
+    }
+});
+
+// endResult: 1 Success, 0 Fail, 2 Skipped Word
+socket.on('endScreen', function(guesserUsername, guesserGuess, actualWord, endResult, score, gameCode){
+    $pageArea.html($endPage);
+    $('#guesserName').html(guesserUsername);
+    $('#actualWord').html(actualWord);
+    $('#score').html(score)
+    if (endResult == 1){
+        $('#guessedWord').html(guesserGuess);
+        $('#skipped').remove();
+        $('#wrong').remove();
+    }
+    if (endResult == 0){
+        $('#guessedWord').html(guesserGuess);
+        $('#skipped').remove();
+        $('#right').remove();
+    }
+    if (endResult == 2){
+        $('#madeaguess').remove();
+    }
+})

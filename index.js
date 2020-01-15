@@ -91,6 +91,7 @@ io.on('connection', function (socket) {
     gameObject.currentWordIndex = 0;
     gameObject.noOfCluesSubmitted = 0;
     gameObject.currentGuesserIndex = 0;
+    gameObject.score = 0;
     
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
@@ -263,15 +264,40 @@ io.on('connection', function (socket) {
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
         if(guessersGuess == gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])]){
-          //YOU GOT IT RIGHT!!!
+          gameCollection.gameList[i]['gameObject']['score']++;
+          var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
+          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, gameCollection.gameList[i]['gameObject']['words'][wordIndex], 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
         }
         else{
+          currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
+          io.sockets.in(gameCode).emit('wasGuessCorrect', currentGuesser, guessersGuess, gameCode);
           // Guessers page. You guessed THISWORD
           // Everyone elses page. GUesser guessed THISWORD. The word was this. Was this correct?
         }
       }
     }
   });
+
+  socket.on('skipWord', function(gameCode){
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
+        io.sockets.in(gameCode).emit('endScreen', guesserUsername, "", gameCollection.gameList[i]['gameObject']['words'][wordIndex], 2, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+      }
+    }
+  });
+
+  socket.on('correct', function(gameCode){
+    gameCollection.gameList[i]['gameObject']['score']++;
+    var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
+    io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, gameCollection.gameList[i]['gameObject']['words'][wordIndex], 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+  });
+
+  socket.on('incorrect', function(gameCode){
+    var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
+    io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, gameCollection.gameList[i]['gameObject']['words'][wordIndex], 0, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+  })
 
   // If a user disconnects.
   socket.on('disconnect', function () {
@@ -305,6 +331,7 @@ io.on('connection', function (socket) {
               gameCollection.gameList[i]['gameObject']['clues'] = null;
               gameCollection.gameList[i]['gameObject']['noOfCluesSubmitted'] = 0;
               gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 0;
+              gameCollection.gameList[i]['gameObject']['score'] = 0;
               
               console.log("Removed player: " + username + " from room " + gameCode)
               io.sockets.in(gameCode).emit('removedPlayer', {
