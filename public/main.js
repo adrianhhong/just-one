@@ -42,6 +42,8 @@ $doc.on('click', '.guessWord', onGuessWordClick);
 $doc.on('click', '.skipWord', onSkipWordClick);
 $doc.on('click', '.correct', onCorrectClick);
 $doc.on('click', '.incorrect', onIncorrectClick);
+$doc.on('click', '.continue', onContinueClick);
+$doc.on('click', '.endGame', onEndGameClick);
 
 // Checkboxes
 $doc.on('change', '#check1', function() {
@@ -172,7 +174,7 @@ function onSubmitClueClick(guesserUsername) {
 function onValidCluesClick() {
     var allValidClues = [];
     var j=0;
-    for (i=1; i<allClues.length; i++){
+    for (i=0; i<allClues.length; i++){
         if(! $('#check'+i).prop('checked')){
             allValidClues[j] = allClues[i];
             j++;
@@ -197,6 +199,16 @@ function onCorrectClick(){
 
 function onIncorrectClick(){
     socket.emit('isCorrect', 0, gameCode);
+}
+
+function onContinueClick(){
+    socket.emit('continueGame', gameCode);
+    // Start next word immediately
+}
+
+function onEndGameClick(){
+    // Alert ARE YOU SURE?
+    socket.emit('endGame', gameCode);
 }
 
 /* *************************
@@ -238,13 +250,14 @@ socket.on('gameCreated', function (data) {
     
     $pageArea.html($lobbyPage);
 
-    gameCode = data.gameId; 
+    gameCode = data.gameId;
+    username = data.username;
 
     // Display the access code
-    $('#accesscodeDisplay').html(data.gameId);
+    $('#accesscodeDisplay').html(gameCode);
 
     // Display player 1
-    $('.list-group').append($('<li>').attr('class', 'list-group-item current-player d-flex justify-content-between align-items-center').append(data.username).append('<span class="badge badge-dark badge-pill">You</span>'));
+    $('.list-group').append($('<li>').attr('class', 'list-group-item current-player d-flex justify-content-between align-items-center').append(username).append('<span class="badge badge-dark badge-pill">You</span>'));
 });
 
 socket.on('gameJoined', function (data) {
@@ -310,7 +323,7 @@ socket.on('allFinishedClueSubmission', function(guesserUsername, gameCode, clues
     if(guesserUsername != username){
         $pageArea.html($othersremovecluesPage);
         // Print out each clue, start at 1 since the guesser is 0.
-        for (var i=1; i<clues.length; i++) {
+        for (var i=0; i<clues.length; i++) {
             $('#form-check'+i).append($('<input>').attr('class', 'form-check-input').attr('type', 'checkbox').attr('id', 'check'+i));
             $('#form-check'+i).append($('<label>').attr('class', 'form-check-label').attr('for', 'check'+i).append(clues[i]));
         }
@@ -361,13 +374,17 @@ socket.on('endScreen', function(guesserUsername, guesserGuess, actualWord, endRe
         $('#guessedWord').html(guesserGuess);
         $('#skipped').remove();
         $('#wrong').remove();
+        $('#skip').remove();
     }
     if (endResult == 0){
         $('#guessedWord').html(guesserGuess);
         $('#skipped').remove();
         $('#right').remove();
+        $('#skip').remove();
     }
     if (endResult == 2){
         $('#madeaguess').remove();
+        $('#right').remove();
+        $('#wrong').remove();
     }
 })

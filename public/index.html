@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="style.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <title>Insider</title>
+  <title>Just One</title>
 </head>
 
 
@@ -20,7 +20,7 @@
 
 
   <script class="home-page" type="text/template">
-    <h1>Insider</h1>
+    <h1>Just One</h1>
     <hr>
     <br>
     <div class="gameButtons">
@@ -29,13 +29,13 @@
     </div>
     <br>
     <hr>
-    <small>Based off Insider by Oink Games</small>
+    <small>Based off Just One published by Repos Production</small>
     <br>
     <small>Adrian Hong</small>
   </script>
   
   <script class="create-page" type="text/template">
-    <h1> Insider </h1>
+    <h1>Just One</h1>
     <hr>
     <br>
     <input class="usernameInput form-control" type="text" maxlength="14" placeholder="Enter your name"/>
@@ -48,7 +48,7 @@
   </script>
 
   <script class="join-page" type="text/template">
-    <h1> Insider </h1>
+    <h1>Just One</h1>
     <hr>
     <br>
     <div class="row">
@@ -67,9 +67,9 @@
   </script>
 
   <script class="lobby-page" type="text/template">
-    <h1> Insider </h1>
+    <h1>Just One</h1>
     <hr>
-    <h6>Access code: </h6>
+    <h6>Access code:</h6>
     <div class="gameButtons">
       <button class="copyCode btn btn-outline-info">
         <span id="accesscodeDisplay"></span>
@@ -104,7 +104,7 @@
   </script>
 
   <script class="others-clue-page" type="text/template">
-    <p>The word is: </p>
+    <p>The word is:</p>
     <h2 id="wordDisplay"></h2>
     <br>
     <p>Type in a <strong>one word</strong> clue to help </p>
@@ -121,14 +121,14 @@
 
   
   <script class="others-remove-clues-page" type="text/template">
-    <p> CLUES </p>
+    <p>Clues</p>
     <div class="clues-list">
+      <div class="form-check" id="form-check0"></div>
       <div class="form-check" id="form-check1"></div>
       <div class="form-check" id="form-check2"></div>
       <div class="form-check" id="form-check3"></div>
       <div class="form-check" id="form-check4"></div>
       <div class="form-check" id="form-check5"></div>
-      <div class="form-check" id="form-check6"></div>
     </div>
     <br>
     <div class="gameButtons">
@@ -184,7 +184,8 @@
     <h2 id="actualWord"></h2>
     <!-- maybe have a list of quotes when you get it right/wrong -->
     <p id="right">You got it right!!!</p>
-    <p id="wrong">Unlucky m8, you were so close!!!</p>
+    <p id="wrong">You were WRONG!!!</p>
+    <p id="skip">Yea that was a toughy, good idea to skip.</p>
     <p>Current score:</p>
     <h2 id="score"></h2>
     <div class="gameButtons">

@@ -62,7 +62,7 @@ io.on('connection', function (socket) {
 
   // createGame: when the client requests to make a Game
   socket.on('createGame', function (username) {
-    var gameObject = {};
+
     var newRoom = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
     // If theres already some rooms, check if there is a duplicate
     var duplicateRoom = true;
@@ -81,6 +81,8 @@ io.on('connection', function (socket) {
       }
     }
 
+    var gameObject = {};
+
     // Get 13 random words
     var randomWords = shuffle(words.wordPool, 13);
 
@@ -93,6 +95,7 @@ io.on('connection', function (socket) {
     gameObject.currentGuesserIndex = 0;
     gameObject.score = 0;
     gameObject.guess = "";
+    gameObject.outcome = 0; // set it to loss // // endResult: 1 Success, 0 Fail, 2 Skipped Word
     
     gameCollection.totalGameCount ++;
     gameCollection.gameList.push({gameObject});
@@ -236,6 +239,7 @@ io.on('connection', function (socket) {
         } else{
           // Go to the remove words page
           var allClues = gameCollection.gameList[i]['gameObject']['clues'];
+          allClues.splice(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'], 1);
           io.sockets.in(gameCode).emit('allFinishedClueSubmission', guesserUsername, gameCode, allClues);
         }
       }
@@ -269,6 +273,7 @@ io.on('connection', function (socket) {
         gameCollection.gameList[i]['gameObject']['guess'] = guessersGuess;
         if(guessersGuess == actualWord){
           gameCollection.gameList[i]['gameObject']['score']++;
+          gameCollection.gameList[i]['gameObject']['outcome'] == 1;
           io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
         }
         else{
@@ -284,6 +289,7 @@ io.on('connection', function (socket) {
       if (gameIdTmp == gameCode){
         var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
         var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
+        gameCollection.gameList[i]['gameObject']['outcome'] == 2;
         io.sockets.in(gameCode).emit('endScreen', guesserUsername, "", actualWord, 2, gameCollection.gameList[i]['gameObject']['score'], gameCode);
       }
     }
@@ -298,14 +304,63 @@ io.on('connection', function (socket) {
         var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
         if (isCorrect){
           gameCollection.gameList[i]['gameObject']['score']++;
+          gameCollection.gameList[i]['gameObject']['outcome'] == 1;
           io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
         } else{
+          gameCollection.gameList[i]['gameObject']['outcome'] == 0;
           io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 0, gameCollection.gameList[i]['gameObject']['score'], gameCode);
         }
       }
     }
   });
 
+  socket.on('continueGame', function (gameCode) {
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        // Preallocate the clues with nulls depending on no. of players
+        amountOfPlayers = gameCollection.gameList[i]['gameObject']['players'].length;
+        gameCollection.gameList[i]['gameObject']['clues'] = new Array(amountOfPlayers).fill(null);
+        gameCollection.gameList[i]['gameObject']['guess'] = "";
+        gameCollection.gameList[i]['gameObject']['noOfCluesSubmitted'] = 0;
+
+        var currentOutcome = gameCollection.gameList[i]['gameObject']['outcome'];
+        
+        if (currentOutcome == 1 || currentOutcome == 2){
+          gameCollection.gameList[i]['gameObject']['currentWordIndex']++; 
+        }
+        if (currentOutcome == 0){
+          gameCollection.gameList[i]['gameObject']['currentWordIndex'] += 2; 
+        }
+
+        gameCollection.gameList[i]['gameObject']['outcome'] = 0;
+        gameCollection.gameList[i]['gameObject']['currentGuesserIndex']++;
+
+        currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
+        guesserSocket = getKeyByValue(allClients, currentGuesser)
+        io.to(guesserSocket).emit('allocateGuesser', currentGuesser, gameCode);
+      }
+    }
+  });
+
+
+  socket.on('endGame', function (gameCode) {
+    for(var i = 0; i < gameCollection.totalGameCount; i++){
+      var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
+      if (gameIdTmp == gameCode){
+        gameCollection.gameList[i]['gameObject']['guess'] = "";
+        gameCollection.gameList[i]['gameObject']['noOfCluesSubmitted'] = 0;
+        gameCollection.gameList[i]['gameObject']['outcome'] = 0;
+        gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 0;
+
+        currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
+        io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {
+          players: gameCollection.gameList[i]['gameObject']['players'],
+          gameId: gameCollection.gameList[i]['gameObject']['id']
+        });
+      }
+    }
+  });
 
   // If a user disconnects.
   socket.on('disconnect', function () {
