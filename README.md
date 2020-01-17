@@ -1,7 +1,7 @@
 # Just One Board Game
 
 ---
-http://insider-bg.herokuapp.com/
+https://justonegame.herokuapp.com/
 ---
 
 To do:
