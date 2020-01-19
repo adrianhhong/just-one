@@ -15,6 +15,7 @@ var $pageArea = $('.page-area'); // The home page
 var $homePage = $('.home-page').html(); // The home page
 var $createPage = $('.create-page').html(); // The create game page
 var $joinPage = $('.join-page').html(); // The join game page
+var $rulesPage = $('.rules-page').html(); // Rules
 var $lobbyPage = $('.lobby-page').html(); // The game lobby page
 var $guesserwaitPage = $('.guesser-wait-page').html(); // The waiting room for the guesser. Waiting for everyone to choose a clue.
 var $otherscluePage = $('.others-clue-page').html(); // Page for others to give clues
@@ -25,12 +26,14 @@ var $otherswaitforguessPage = $('.others-wait-for-guess-page').html(); // The gu
 var $guesserwaitforverificationPage = $('.guesser-wait-for-verification-page').html(); // Wait for verification from others on whether guess was correct.
 var $verificationPage = $('.verification-page').html(); // Others verify if the word is correct
 var $endPage = $('.end-page').html(); // The guesser guess word from clues page
+var $finalPage = $('.final-page').html(); // Final score page
 
 
 
 // Buttons
 $doc.on('click', '.newGame', onNewGameClick);
 $doc.on('click', '.joinGame', onJoinGameClick);
+$doc.on('click', '.rules', onRulesClick);
 $doc.on('click', '.createGame', onCreateGameClick);
 $doc.on('click', '.backtoHome', onBackToHomeClick);
 $doc.on('click', '.startGame', onStartGameClick);
@@ -123,6 +126,11 @@ function onCreateGameClick() {
     // username = $usernameInput.val().trim();
     username = $('.usernameInput').val();
     socket.emit('createGame', username); 
+}
+
+// Rules Button
+function onRulesClick() {
+    $pageArea.html($rulesPage);
 }
 
 // Back Button
@@ -387,4 +395,9 @@ socket.on('endScreen', function(guesserUsername, guesserGuess, actualWord, endRe
         $('#right').remove();
         $('#wrong').remove();
     }
-})
+});
+
+socket.on('finaliseGame', function(score, gameCode) {
+    $pageArea.html($finalPage);
+    $('#finalScore').html(score);
+});

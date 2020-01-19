@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="style.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>Just One</title>
 </head>
 
@@ -24,14 +25,23 @@
     <hr>
     <br>
     <div class="gameButtons">
-        <button class="newGame btn btn-outline-light" placeholder="New Game">New Game</button>
-        <button class="joinGame btn btn-outline-light" placeholder="Join Game">Join Game</button>
+      <button class="newGame btn btn-outline-light" placeholder="New Game">New Game</button>
+      <button class="joinGame btn btn-outline-light" placeholder="Join Game">Join Game</button>
+      <br>
+    </div>
+    <br>
+    <div class="alert alert-light alert-overview" role="alert">
+      <b>Just One</b> is a <b>cooperative party game</b>.<br>
+      Help the <b>active player</b> guess a <b>Mystery word</b> with clues.
+    </div>
+    <div class="gameButtons">
+      <button class="rules btn btn-outline-light" placeholder="Rules">Rules</button>
     </div>
     <br>
     <hr>
-    <small>Based off Just One published by Repos Production</small>
+    <small>Originally published by <a href="https://boardgamegeek.com/boardgame/254640/just-one">Repos Production</a></small>
     <br>
-    <small>Adrian Hong</small>
+    <a href="https://github.com/adrianhhong/just-one "><i class="fa fa-github"></i> Adrian Hong</a>
   </script>
   
   <script class="create-page" type="text/template">
@@ -66,12 +76,32 @@
     </div>
   </script>
 
+  <script class="rules-page" type="text/template">
+    <h1>Just One</h1>
+    <hr>
+    <div class="alert alert-light alert-rules" role="alert">
+      <b style="font-size: 30px">Rules</b><br>
+      1. One of the players is given a random word to guess.<br>
+      2. Everyone else <b>secretly writes</b><b> a single word</b> clue.<br>
+      <small>A digit, a number, an acronym, an onomatopoeia, or a special character are all considered to be <u>words</u>.<br>
+      
+      </small>
+      
+      3. <b>Compare</b> clues and <b>remove</b> any <b>identical clues</b>.<br>
+      4. <b>Show the remaining clues</b> to the player so they can guess the <b>Mystery word</b>!<br>
+    </div>
+    <div class="gameButtons">
+      <button class="backtoHome btn btn-outline-light" placeholder="Back">Back</button>
+    </div>
+  </script>
+
   <script class="lobby-page" type="text/template">
     <h1>Just One</h1>
     <hr>
     <h6>Access code:</h6>
     <div class="gameButtons">
-      <button class="copyCode btn btn-outline-info">
+      <!-- <button class="copyCode btn btn-outline-info"> -->
+        <button class="copyCode btn btn-outline-info">
         <span id="accesscodeDisplay"></span>
         <i class="material-icons">file_copy</i>
       </button>
@@ -118,10 +148,10 @@
     </div> -->
   </script>
 
-
   
   <script class="others-remove-clues-page" type="text/template">
-    <p>Clues</p>
+    <h2>Clues</h2>
+    <p>Remove identical or invalid words by clicking on them!</p>
     <div class="clues-list">
       <div class="form-check" id="form-check0"></div>
       <div class="form-check" id="form-check1"></div>
@@ -173,8 +203,6 @@
     </div>
   </script>
 
-
-
   <script class="end-page" type="text/template">
     <h2 id="guesserName"></h2>
     <p id="madeaguess">guessed the word was:</p>
@@ -190,6 +218,52 @@
     <h2 id="score"></h2>
     <div class="gameButtons">
       <button class="continue btn btn-outline-light" placeholder="Continue">Continue</button>
+      <button class="endGame btn btn-outline-light" placeholder="End Game">End Game</button>
+    </div>
+  </script>
+
+  <script class="final-page" type="text/template">
+    <h2>Final Score:</h2>
+    <h2 id="finalScore"></h2>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th scope="col">Successful Cards</th>
+          <th scope="col">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>13</td>
+          <td>Perfect score! Can you do it again?</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Incredible! Your friends must be impressed!</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Awesome! That's a score worth celebrating!</td>
+        </tr>
+        <tr>
+          <td>9-10</td>
+          <td>Wow, not bad at all!</td>
+        </tr>
+        <tr>
+          <td>7-8</td>
+          <td>You're in the average. Can you do better?</td>
+        </tr>
+        <tr>
+          <td>4-6</td>
+          <td>That's a good start. Try again!</td>
+        </tr>
+        <tr>
+          <td>0-3</td>
+          <td>Try again, and again, and again.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="gameButtons">
       <button class="endGame btn btn-outline-light" placeholder="End Game">End Game</button>
     </div>
   </script>

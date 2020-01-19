@@ -3,48 +3,53 @@
   --secondary-color: #818cab;
   --font-color: #e1e1ff;
   --bg-color: #161625;
-  --heading-color: #818cab;
+  --heading-color: #2d2d4a;
   --break-color: #e1e1ff;
+  /* --primary-color: #03738C;
+  --secondary-color: #0396A6;
+  --font-color: #03738C;
+  --bg-color: rgb(3, 3, 3);
+  --heading-color: #B4C4D9;
+  --break-color: #023859; */
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--font-color);
-
-  /* padding-left: calc(50% - 300px);
-  padding-right: calc(50% - 300px); */
   display: block;
   text-align: center;
   text-align: -webkit-center;
 }
 
-.page-area {
-  /* max-width: 500px;
-  position: relative;
-  margin: 0 auto;
-  padding: 30px;
-  height: 100vh; */
-  max-width: 500px;
-  /* width: 100%; */
-}
-
 hr {
   border-color: var(--break-color);
   box-sizing: content-box;
-  /* width: 300px; */
 }
 
-/* .btn {
-  width: 120px !important;
-} */
 
+
+/* Page Area */
+.page-area {
+  max-width: 500px;
+}
+
+/* Home Page */
+.alert-overview{
+  background-color: var(--heading-color);
+  border-color: var(--heading-color);
+  color: var(--font-color);
+}
+
+/* Rules Page */
+.alert-rules{
+  text-align: left;
+  background-color: var(--heading-color);
+  border-color: var(--heading-color);
+  color: var(--font-color);
+}
+
+/* Lobby Page */
 .players-container {
-  margin: 0 auto;
-  justify-content: center;
-  width: 70%;
-}
-
-.clues-container {
   margin: 0 auto;
   justify-content: center;
   width: 70%;
@@ -56,10 +61,6 @@ ul.list-group {
 
 .list-group-item{
   color: black;
-}
-
-#canvas {
-  border: 2px solid white;
 }
 
 li {
@@ -74,3 +75,21 @@ li {
 .material-icons {
   font-size: 16px !important;
 }
+
+
+/* Clues Page */
+input[type=checkbox]:checked + label {
+  text-decoration: line-through;
+} 
+
+.clues-container {
+  margin: 0 auto;
+  justify-content: center;
+  width: 70%;
+}
+
+/* Final Page */
+.table{
+  color: white;
+}
+

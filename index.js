@@ -335,10 +335,15 @@ io.on('connection', function (socket) {
 
         gameCollection.gameList[i]['gameObject']['outcome'] = 0;
         gameCollection.gameList[i]['gameObject']['currentGuesserIndex']++;
+        // gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 13 //TESTING
+        if (gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] >= 13){
+          io.sockets.in(gameCode).emit('finaliseGame', gameCollection.gameList[i]['gameObject']['currentGuesserIndex'], gameCode);
+        } else{
+          currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
+          guesserSocket = getKeyByValue(allClients, currentGuesser)
+          io.to(guesserSocket).emit('allocateGuesser', currentGuesser, gameCode);
+        }
 
-        currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
-        guesserSocket = getKeyByValue(allClients, currentGuesser)
-        io.to(guesserSocket).emit('allocateGuesser', currentGuesser, gameCode);
       }
     }
   });
