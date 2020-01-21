@@ -8,6 +8,7 @@
   <link rel="stylesheet" type="text/css" href="style.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
   <title>Just One</title>
 </head>
 
@@ -21,7 +22,7 @@
 
 
   <script class="home-page" type="text/template">
-    <h1>Just One</h1>
+    <h1><b>Just One</b></h1>
     <hr>
     <br>
     <div class="gameButtons">
@@ -30,10 +31,10 @@
       <br>
     </div>
     <br>
-    <div class="alert alert-light alert-overview" role="alert">
+    <!-- <div class="alert alert-light alert-overview" role="alert">
       <b>Just One</b> is a <b>cooperative party game</b>.<br>
       Help the <b>active player</b> guess a <b>Mystery word</b> with clues.
-    </div>
+    </div> -->
     <div class="gameButtons">
       <button class="rules btn btn-outline-light" placeholder="Rules">Rules</button>
     </div>
@@ -45,7 +46,7 @@
   </script>
   
   <script class="create-page" type="text/template">
-    <h1>Just One</h1>
+    <h1><b>Just One</b></h1>
     <hr>
     <br>
     <input class="usernameInput form-control" type="text" maxlength="14" placeholder="Enter your name"/>
@@ -58,7 +59,7 @@
   </script>
 
   <script class="join-page" type="text/template">
-    <h1>Just One</h1>
+    <h1><b>Just One</b></h1>
     <hr>
     <br>
     <div class="row">
@@ -77,18 +78,41 @@
   </script>
 
   <script class="rules-page" type="text/template">
-    <h1>Just One</h1>
+    <h1><b>Just One</b></h1>
     <hr>
     <div class="alert alert-light alert-rules" role="alert">
       <b style="font-size: 30px">Rules</b><br>
-      1. One of the players is given a random word to guess.<br>
-      2. Everyone else <b>secretly writes</b><b> a single word</b> clue.<br>
-      <small>A digit, a number, an acronym, an onomatopoeia, or a special character are all considered to be <u>words</u>.<br>
-      
-      </small>
-      
-      3. <b>Compare</b> clues and <b>remove</b> any <b>identical clues</b>.<br>
-      4. <b>Show the remaining clues</b> to the player so they can guess the <b>Mystery word</b>!<br>
+      <ol>
+        <li>One of the players is given a random word to guess.<br>
+        <li>Everyone else <b>secretly writes</b><b> a single word</b> clue.<br>
+        <small>A digit, a number, an acronym, an onomatopoeia, or a special character are all considered to be words.<br>
+        <b>Invalid clues:</b><br>
+        <ul style="padding-left: 10px">
+          <li>The mystery word but <u>written differently</u>.<br>
+          <i>E.g. <b>Shurt</b> is not allowed when trying to make the player guess <b>Shirt</b>.</i><br>
+          <li>The mystery word in a <u>foreign language</u>.<br>
+          <i>E.g. <b>Buisson</b> is not allowed if the word to be guessed is <b>Shrub</b>.</i><br>
+          <li>A word from the <u>same family</u> as the mystery word.<br>
+          <i>E.g. <b>Princess</b> is not allowed if the word to be guessed is <b>Prince</b>.</i><br>
+          <li>An <u>invented word</u>.<br>
+          <i>E.g. <b>Swee’ting</b> is not allowed to try to help someone guess <b>Cake</b>.</i><br>
+          <li>A word <u>phonetically identical</u> to the mystery word, but the <u>meaning</u> of which is <u>different</u>.<br>
+          <i>E.g. <b>Whether</b> is not allowed to try to get someone to guess <b>Weather</b>.</i><br>
+        </ul>
+        </small>
+        <li><b>Compare</b> clues and <b>remove</b> any <b>identical clues</b>.<br>
+          <small><b>Identical clues:</b><br>
+            <ul style="padding-left: 10px">
+              <li>Two <u>identical words</u>.<br>
+              <i>E.g. <b>Mouse</b> and <b>Mouse</b> are identical.</i><br>
+              <li><u>Variants</u> from the <u>same word family</u>.<br>
+              <i>E.g. <b>Prince</b> and <b>Princess</b> are considered to be identical.</i><br>
+              <li><u>Variants</u>of the <u>same word</u>:plurals, gender differentiations, and spelling mistakes don’t count as actual differences.<br>
+              <i>E.g. <b>Prince</b> and <b>Princess</b>, <b>Actor</b> and <b>Actress</b>, <b>Philosophy</b> and <b>Filosofie</b> are identical.</i><br>
+            </ul>
+        </small>
+        <li><b>Show the remaining clues</b> to the player so they can guess the <b>Mystery word</b>!<br>
+    </ol>
     </div>
     <div class="gameButtons">
       <button class="backtoHome btn btn-outline-light" placeholder="Back">Back</button>
@@ -96,7 +120,7 @@
   </script>
 
   <script class="lobby-page" type="text/template">
-    <h1>Just One</h1>
+    <h1><b>Just One</b></h1>
     <hr>
     <h6>Access code:</h6>
     <div class="gameButtons">
@@ -134,13 +158,12 @@
   </script>
 
   <script class="others-clue-page" type="text/template">
+    <p>Type in a <strong>one word</strong> clue to help <strong id="guesserDisplay"></strong> guess the mystery word!</p>
+    <br>
     <p>The word is:</p>
     <h2 id="wordDisplay"></h2>
     <br>
-    <p>Type in a <strong>one word</strong> clue to help </p>
-    <h2 id="guesserDisplay"></h2>
-    <p>guess the word!</p>
-    <em>Remember! Any identical clues will be removed!</em>
+    <p>Remember! Any identical clues will be removed!</p>
     <br>
     <input class="clueInput btn btn-outline-light my-1" type="text" placeholder="Enter a clue"/>
     <!-- <div class="gameButtons">
@@ -167,12 +190,12 @@
   </script>
 
   <script class="guesser-guess-page" type="text/template">
-    <h6>Clues:</h6>
+    <h2>Clues:</h2>
     <div class="clues-container">
       <ul class="list-group">
       </ul>
     </div>
-    <p>Based on these clues, what is the word???</p>
+    <p>Guess the mystery word based on these clues!</p>
     <div class="row">
       <input class="guessersGuessInput form-control col-sm mx-2 mb-1" type="text" placeholder="What is the word?"/>
     </div>
@@ -183,18 +206,18 @@
   </script>
 
   <script class="others-wait-for-guess-page" type="text/template">
-    <h6>The guesser is guessing the word from your clues ... Will they get it right?</h6>
+    <h2>The active player is guessing the word from your clues ... Will they get it right?</h2>
   </script>
 
   <script class="guesser-wait-for-verification-page" type="text/template">
-    <h6>The clue providers are checking if your word was correct...</h6>
+    <h2>The clue providers are checking if your word was the mystery word...</h2>
   </script>
 
   <script class="verification-page" type="text/template">
-    <h2 id="guesserName"></h2>
-    <p>guessed the word was:</p>
+    <span><strong id="guesserName"></strong> guessed the word was:</span>
     <h2 id="guessedWord"></h2>
-    <p>The actual word was:</p>
+    <br>
+    <span>The actual word was:</span>
     <h2 id="actualWord"></h2>
     <p>Were they correct?</p>
     <div class="gameButtons">
@@ -204,18 +227,27 @@
   </script>
 
   <script class="end-page" type="text/template">
-    <h2 id="guesserName"></h2>
-    <p id="madeaguess">guessed the word was:</p>
-    <p id="skipped">skipped this word.</p>
+    <strong id="guesserName"></strong>
+    <span id="madeaguess"> guessed the word was:</span>
+    <span id="skipped">skipped this word.</span>
+    <br>
     <h2 id="guessedWord"></h2>
-    <p>The actual word was:</p>
+    <br>
+    <span>The actual word was:</span>
     <h2 id="actualWord"></h2>
     <!-- maybe have a list of quotes when you get it right/wrong -->
-    <p id="right">You got it right!!!</p>
-    <p id="wrong">You were WRONG!!!</p>
-    <p id="skip">Yea that was a toughy, good idea to skip.</p>
-    <p>Current score:</p>
+    <br>
+    <em id="right">You guessed the mystery word correctly!</em>
+    <br>
+    <em id="wrong">You guessed the mystery word wrong...</em>
+    <br>
+    <em id="skip">You skipped the mystery word.</em>
+    <br>
+    <h2>Current score:</h2>
     <h2 id="score"></h2>
+    <span>There are <strong id="wordsLeft"></strong> words left.</span>
+    <br>
+    <br>
     <div class="gameButtons">
       <button class="continue btn btn-outline-light" placeholder="Continue">Continue</button>
       <button class="endGame btn btn-outline-light" placeholder="End Game">End Game</button>

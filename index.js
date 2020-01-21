@@ -178,6 +178,8 @@ io.on('connection', function (socket) {
           else{
             gameCollection.gameList[i]['gameObject']['players'].splice(usernameIndex,1)
             console.log("Removed player: " + username + " from room " + gameCode)
+            socket.leave(gameCode) // Unlike when we disconnect, we have to leave the socket.io room
+            socket.emit('gameDestroyed')
             io.sockets.in(gameCode).emit('removedPlayer', {
               players: gameCollection.gameList[i]['gameObject']['players'],
               gameId: gameCollection.gameList[i]['gameObject']['id']
@@ -274,7 +276,8 @@ io.on('connection', function (socket) {
         if(guessersGuess == actualWord){
           gameCollection.gameList[i]['gameObject']['score']++;
           gameCollection.gameList[i]['gameObject']['outcome'] == 1;
-          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+          var wordsLeft = 12 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
+          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
         }
         else{
           io.sockets.in(gameCode).emit('verifyGuess', guesserUsername, guessersGuess, actualWord, gameCode);
@@ -290,7 +293,8 @@ io.on('connection', function (socket) {
         var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
         var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
         gameCollection.gameList[i]['gameObject']['outcome'] == 2;
-        io.sockets.in(gameCode).emit('endScreen', guesserUsername, "", actualWord, 2, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+        var wordsLeft = 12 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
+        io.sockets.in(gameCode).emit('endScreen', guesserUsername, "", actualWord, 2, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
       }
     }
   });
@@ -305,10 +309,12 @@ io.on('connection', function (socket) {
         if (isCorrect){
           gameCollection.gameList[i]['gameObject']['score']++;
           gameCollection.gameList[i]['gameObject']['outcome'] == 1;
-          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+          var wordsLeft = 12 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
+          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
         } else{
           gameCollection.gameList[i]['gameObject']['outcome'] == 0;
-          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 0, gameCollection.gameList[i]['gameObject']['score'], gameCode);
+          var wordsLeft = 11 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
+          io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 0, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
         }
       }
     }
@@ -335,8 +341,8 @@ io.on('connection', function (socket) {
 
         gameCollection.gameList[i]['gameObject']['outcome'] = 0;
         gameCollection.gameList[i]['gameObject']['currentGuesserIndex']++;
-        // gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 13 //TESTING
-        if (gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] >= 13){
+        gameCollection.gameList[i]['gameObject']['currentWordIndex'] = 12 //TESTING
+        if (gameCollection.gameList[i]['gameObject']['currentWordIndex'] >= 12){
           io.sockets.in(gameCode).emit('finaliseGame', gameCollection.gameList[i]['gameObject']['currentGuesserIndex'], gameCode);
         } else{
           currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]

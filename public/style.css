@@ -19,6 +19,7 @@ body {
   display: block;
   text-align: center;
   text-align: -webkit-center;
+  font-family: 'Nunito', sans-serif;
 }
 
 hr {
@@ -76,6 +77,10 @@ li {
   font-size: 16px !important;
 }
 
+/* Write clue Page */
+#guesserDisplay, #wordDisplay, #guesserName, #guessedWord, #actualWord{
+  color: var(--primary-color);
+}
 
 /* Clues Page */
 input[type=checkbox]:checked + label {
@@ -88,8 +93,15 @@ input[type=checkbox]:checked + label {
   width: 70%;
 }
 
+/* End Page */
+#score, #wordsLeft{
+  color: var(--secondary-color);
+}
+
 /* Final Page */
 .table{
   color: white;
 }
+
+
 
