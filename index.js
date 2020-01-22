@@ -202,16 +202,16 @@ io.on('connection', function (socket) {
         // Preallocate the clues with nulls depending on no. of players
         amountOfPlayers = gameCollection.gameList[i]['gameObject']['players'].length;
 
-        //if (amountOfPlayers >= 3){ // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
+        if (amountOfPlayers >= 3){ // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
           gameCollection.gameList[i]['gameObject']['clues'] = new Array(amountOfPlayers).fill(null);
           // Submit a socket to the first guesser
           currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
           guesserSocket = getKeyByValue(allClients, currentGuesser)
           io.to(guesserSocket).emit('allocateGuesser', currentGuesser, gameCode);
-        //} // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
-        //else { // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
-          // socket.emit('needMorePlayers') // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
-        //} // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
+        } // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
+        else { // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
+          socket.emit('needMorePlayers') // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
+        } // 3 PLAYER REQUIREMENT REMOVE THIS WHEN FINISHED.
       }
     }
   });
@@ -341,7 +341,7 @@ io.on('connection', function (socket) {
 
         gameCollection.gameList[i]['gameObject']['outcome'] = 0;
         gameCollection.gameList[i]['gameObject']['currentGuesserIndex']++;
-        gameCollection.gameList[i]['gameObject']['currentWordIndex'] = 12 //TESTING
+        // gameCollection.gameList[i]['gameObject']['currentWordIndex'] = 12 //TESTING
         if (gameCollection.gameList[i]['gameObject']['currentWordIndex'] >= 12){
           io.sockets.in(gameCode).emit('finaliseGame', gameCollection.gameList[i]['gameObject']['currentGuesserIndex'], gameCode);
         } else{
