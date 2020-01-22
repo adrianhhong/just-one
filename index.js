@@ -275,7 +275,7 @@ io.on('connection', function (socket) {
         gameCollection.gameList[i]['gameObject']['guess'] = guessersGuess;
         if(guessersGuess == actualWord){
           gameCollection.gameList[i]['gameObject']['score']++;
-          gameCollection.gameList[i]['gameObject']['outcome'] == 1;
+          gameCollection.gameList[i]['gameObject']['outcome'] = 1;
           var wordsLeft = 12 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
           io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
         }
@@ -292,7 +292,7 @@ io.on('connection', function (socket) {
       if (gameIdTmp == gameCode){
         var guesserUsername = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
         var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
-        gameCollection.gameList[i]['gameObject']['outcome'] == 2;
+        gameCollection.gameList[i]['gameObject']['outcome'] = 2;
         var wordsLeft = 12 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
         io.sockets.in(gameCode).emit('endScreen', guesserUsername, "", actualWord, 2, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
       }
@@ -308,11 +308,11 @@ io.on('connection', function (socket) {
         var actualWord = gameCollection.gameList[i]['gameObject']['words'][(gameCollection.gameList[i]['gameObject']['currentWordIndex'])];
         if (isCorrect){
           gameCollection.gameList[i]['gameObject']['score']++;
-          gameCollection.gameList[i]['gameObject']['outcome'] == 1;
+          gameCollection.gameList[i]['gameObject']['outcome'] = 1;
           var wordsLeft = 12 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
           io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 1, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
         } else{
-          gameCollection.gameList[i]['gameObject']['outcome'] == 0;
+          gameCollection.gameList[i]['gameObject']['outcome'] = 0;
           var wordsLeft = 11 - (gameCollection.gameList[i]['gameObject']['currentWordIndex']);
           io.sockets.in(gameCode).emit('endScreen', guesserUsername, guessersGuess, actualWord, 0, gameCollection.gameList[i]['gameObject']['score'], wordsLeft, gameCode);
         }
@@ -340,10 +340,15 @@ io.on('connection', function (socket) {
         }
 
         gameCollection.gameList[i]['gameObject']['outcome'] = 0;
-        gameCollection.gameList[i]['gameObject']['currentGuesserIndex']++;
+        // If on last player, go back to the start
+        if ((gameCollection.gameList[i]['gameObject']['players'].length - 1) == gameCollection.gameList[i]['gameObject']['currentGuesserIndex']){
+          gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 0;
+        } else{
+          gameCollection.gameList[i]['gameObject']['currentGuesserIndex']++;
+        }
         // gameCollection.gameList[i]['gameObject']['currentWordIndex'] = 12 //TESTING
-        if (gameCollection.gameList[i]['gameObject']['currentWordIndex'] >= 12){
-          io.sockets.in(gameCode).emit('finaliseGame', gameCollection.gameList[i]['gameObject']['currentGuesserIndex'], gameCode);
+        if (gameCollection.gameList[i]['gameObject']['currentWordIndex'] > 12){
+          io.sockets.in(gameCode).emit('finaliseGame', gameCollection.gameList[i]['gameObject']['score'], gameCode);
         } else{
           currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])]
           guesserSocket = getKeyByValue(allClients, currentGuesser)
@@ -359,10 +364,18 @@ io.on('connection', function (socket) {
     for(var i = 0; i < gameCollection.totalGameCount; i++){
       var gameIdTmp = gameCollection.gameList[i]['gameObject']['id']
       if (gameIdTmp == gameCode){
-        gameCollection.gameList[i]['gameObject']['guess'] = "";
+        // Reset all gameStats
+        var randomWords = shuffle(words.wordPool, 13);
+        gameCollection.gameList[i]['gameObject']['words'] = randomWords;
+        gameCollection.gameList[i]['gameObject']['currentWordIndex'] = 0;
+        gameCollection.gameList[i]['gameObject']['clues'] = null;
         gameCollection.gameList[i]['gameObject']['noOfCluesSubmitted'] = 0;
-        gameCollection.gameList[i]['gameObject']['outcome'] = 0;
         gameCollection.gameList[i]['gameObject']['currentGuesserIndex'] = 0;
+        gameCollection.gameList[i]['gameObject']['score'] = 0;
+        gameCollection.gameList[i]['gameObject']['guess'] = "";
+
+        // gameCollection.gameList[i]['gameObject']['outcome'] = 0;
+
 
         currentGuesser = gameCollection.gameList[i]['gameObject']['players'][(gameCollection.gameList[i]['gameObject']['currentGuesserIndex'])];
         io.sockets.in(gameCollection.gameList[i]['gameObject']['id']).emit('gameJoined', {

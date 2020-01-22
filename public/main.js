@@ -374,6 +374,9 @@ socket.on('verifyGuess', function(guesserUsername, guessersGuess, actualWord, ga
 
 // endResult: 1 Success, 0 Fail, 2 Skipped Word
 socket.on('endScreen', function(guesserUsername, guesserGuess, actualWord, endResult, score, wordsLeft, gameCode){
+    if (wordsLeft < 0){
+        wordsLeft = 0;
+    }
     $pageArea.html($endPage);
     $('#guesserName').html(guesserUsername);
     $('#actualWord').html(actualWord);
