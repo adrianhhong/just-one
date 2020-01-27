@@ -40,6 +40,7 @@ $doc.on('click', '.startGame', onStartGameClick);
 $doc.on('click', '.leaveGame', onLeaveGameClick);
 $doc.on('click', '.joinLobby', onJoinLobbyClick);
 $doc.on('click', '.copyCode', onAccessCodeDisplayClick);
+$doc.on('click', '.submitClue', onSubmitClueClick);
 $doc.on('click', '.validClues', onValidCluesClick);
 $doc.on('click', '.guessWord', onGuessWordClick);
 $doc.on('click', '.skipWord', onSkipWordClick);
