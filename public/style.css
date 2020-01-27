@@ -28,13 +28,6 @@ hr {
 }
 
 /* Used to fix a typing issue for inputs on iOS */
-/* input, input:before, input:after {
-  -webkit-user-select: auto !important;
-  -khtml-user-select: auto !important;
-  -moz-user-select: auto !important;
-  -ms-user-select: auto !important;
-  user-select: auto !important;
-} */
 [contenteditable="true"] , input, textarea {
   -webkit-user-select: auto !important;
   -khtml-user-select: auto !important;
@@ -80,14 +73,6 @@ ul.list-group {
   color: black;
 }
 
-/* li {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-} */
 
 .material-icons {
   font-size: 16px !important;

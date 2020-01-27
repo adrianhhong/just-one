@@ -63,12 +63,14 @@ io.on('connection', function (socket) {
   // createGame: when the client requests to make a Game
   socket.on('createGame', function (username) {
 
-    var newRoom = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+    // var newRoom = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+    var newRoom = (Math.random()+1).toString(10).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
     // If theres already some rooms, check if there is a duplicate
     var duplicateRoom = true;
     if (gameCollection.totalGameCount != 0){
       while (duplicateRoom == true){
-        var newRoom = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+        // var newRoom = (Math.random()+1).toString(36).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
+        var newRoom = (Math.random()+1).toString(10).slice(2,6).toUpperCase(); //Create a gameID which is a 4-digit code
         for(var i = 0; i < gameCollection.totalGameCount; i++){
           var gameIdTmp = gameCollection.gameList[i]['gameObject']['id'];
           duplicateRoom = false;
