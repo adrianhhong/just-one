@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
   <title>Just One</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 
 
@@ -125,7 +129,7 @@
     <h6>Access code:</h6>
     <div class="gameButtons">
       <!-- <button class="copyCode btn btn-outline-info"> -->
-        <button class="copyCode btn btn-outline-info">
+        <button class="copyCode btn btn-outline-light">
         <span id="accesscodeDisplay"></span>
         <i class="material-icons">file_copy</i>
       </button>
@@ -150,7 +154,7 @@
 
   <script class="guesser-wait-page" type="text/template">
     <h2>You are guessing the word!</h2>
-    <h2>Please wait for everyone to provide clues!</h2>
+    <h2>Please wait for everyone to provide clues.</h2>
   </script>
 
   <script class="others-wait-page" type="text/template">
@@ -174,7 +178,7 @@
   
   <script class="others-remove-clues-page" type="text/template">
     <h2>Verify Clues</h2>
-    <p>Remove identical or invalid clues by clicking on them!</p>
+    <p>Remove <b>identical</b> or <b>invalid</b> clues by clicking on them!</p>
     <div class="clues-list">
       <div class="form-check" id="form-check0"></div>
       <div class="form-check" id="form-check1"></div>
@@ -195,7 +199,7 @@
       <ul class="list-group">
       </ul>
     </div>
-    <p>Guess the mystery word based on these clues!</p>
+    <p>Guess the mystery word based on these clues</p>
     <div class="row">
       <input class="guessersGuessInput form-control col-sm mx-2 mb-1" type="text" placeholder="What is the word?"/>
     </div>
@@ -206,7 +210,7 @@
   </script>
 
   <script class="others-wait-for-guess-page" type="text/template">
-    <h2>The active player is guessing the word from your clues ... Will they get it right?</h2>
+    <h2>The active player is guessing the word from your clues... Will they get it right?</h2>
   </script>
 
   <script class="guesser-wait-for-verification-page" type="text/template">
