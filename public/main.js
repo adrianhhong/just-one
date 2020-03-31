@@ -1,6 +1,7 @@
 //// Initialise variables /////
 var $doc = $(document);
 var $window = $(window);
+var timeout = 3000;
 
 // Client's details
 var username;
@@ -124,9 +125,19 @@ function onJoinGameClick() {
 
 // Create Game Button
 function onCreateGameClick() {
-    // username = $usernameInput.val().trim();
-    username = $('.usernameInput').val();
-    socket.emit('createGame', username); 
+    username = $('.usernameInput').val().trim();
+    // username = $('.usernameInput').val();
+    if (!username){
+        $('#noName').html("Please enter a name.");
+        setTimeout(function(){
+            if ($('#noName').length > 0) {
+                $('#noName').html("");
+            }
+        }, timeout)
+    }
+    else{
+        socket.emit('createGame', username); 
+    }
 }
 
 // Rules Button
@@ -153,11 +164,21 @@ function onLeaveGameClick() {
 
 // Join Lobby Button
 function onJoinLobbyClick() {
-    usernameJoin = $('.usernameJoinInput').val();
+    usernameJoin = $('.usernameJoinInput').val().trim();
     accesscodeJoin = $('.accesscodeInput').val();
-    username = usernameJoin;
-    gameCode = accesscodeJoin;
-    socket.emit('joinGame', usernameJoin, accesscodeJoin);
+    if (!usernameJoin){
+        $('#noName').html("Please enter a name.");
+        setTimeout(function(){
+            if ($('#noName').length > 0) {
+                $('#noName').html("");
+            }
+        }, timeout)
+    }
+    else{
+        username = usernameJoin;
+        gameCode = accesscodeJoin;
+        socket.emit('joinGame', usernameJoin, accesscodeJoin);
+    }
 }
 
 // Access Code Copy Button, copy text to clipboard when pressed
@@ -284,19 +305,31 @@ socket.on('removedPlayer', function (data) {
 
 socket.on('nameTaken', function(){
     $('#nameTaken').html("Sorry, that name has been taken.");
-        //Need to remove after like 5 sec. and fade out
+    setTimeout(function(){
+        if ($('#nameTaken').length > 0) {
+            $('#nameTaken').html("");
+        }
+    }, timeout)
 })
 
 
 socket.on('cantFindGametoJoin', function(){
     $('#noGameFound').html("Sorry, no game found with that access code.");
-        //Need to remove after like 5 sec. and fade out
+    setTimeout(function(){
+        if ($('#noGameFound').length > 0) {
+            $('#noGameFound').html("");
+        }
+    }, timeout)
 })
 
 
 socket.on('noPlayerSlotsAvailable', function(){
     $('#noRoom').html("Sorry, that game room is full.");
-    //Need to remove after like 5 sec. and fade out
+    setTimeout(function(){
+        if ($('#noRoom').length > 0) {
+            $('#noRoom').html("");
+        }
+    }, timeout)
 })
 
 socket.on('gameDestroyed', function(){
